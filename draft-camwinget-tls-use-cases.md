@@ -80,13 +80,31 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 Provide a high level overview of TLS 1.3 that highlights how a proxy becomes difficult.
 
-## Use Case 1
+## Use Case 1 - Acceptable Use Policy (AUP)
 
-Define a use case here.
+Enterprises deploy security devices to enforce Acceptable Use Policy (AUP) accroding to the IT and workplace policies.  The security devices, such as firewall/next-gen firewall and web proxy, act as middle boxes to scan traffic in the enterprise network for policy enforcement.
 
-## Use Case 2
+Sample AUP policies are:
 
-Define a use case here.
+"Employess are not allowed to access 'gaming' websites from enterprise network"
+
+"Temporary workers are not allowed to use enterprise network to upload video clips to Internet, but are allowed to watch video clips"
+
+Such enforcements are accomplished by controlling the DNS transactions and HTTP transactions.  A coase control is achieved by controlling the DNS response, however, in many cases, granular control is required at HTTP URL or Method levels, to distinguish a specific web page on a hosting site, or to differentiate between uploading and downloading operations.
+
+The security device requires to access plain text HTTP header for granular AUP control.
+
+## Use Case 2 - Malware and Threat Protection
+
+Enterprises adopt a multi-technology approach when it comes to malware and threat protection for the network assets.  This include solutions deployed on the endpoint, network and cloud.
+
+While endpoint application based solution is effective in protecting from malware and virus attecks, enterprises prefer to deploy multiple technologies for a multi-layer protection.  Network based solutions provide such additional protection with benefits including lower manangement costs.
+
+The network based solutions comprise security devices and applications that scan network traffic for the purpose from malware signatures to 0-day analysis.  The security functions require access to clear text HTTP or other application level streams.
+
+## Use Case 3 - Data Center Protection
+
+## Use Case 4 - Application Operation over NAT
 
 
 
