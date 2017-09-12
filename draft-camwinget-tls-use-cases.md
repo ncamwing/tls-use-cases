@@ -46,15 +46,21 @@ author:
   country: USA
 
 normative:
-  RFC2119:
-#  RFC3635:
-#  RFC1573:
-#  I-D.greevenbosch-appsawg-cbor-cddl: cddl
-#  I-D.ietf-sacm-architecture-13:
+  RFC2119: 
+  RFC5246: 
+  I-D.ietf-tls-tls13
+
+[comment]: 
+	#  RFC3635: 
+	#  RFC1573: 
+	#  I-D.greevenbosch-appsawg-cbor-cddl: cddl 
+	#  I-D.ietf-sacm-architecture-13:
 
 informative:
-#  RFC7632:
-#  I-D.ietf-sacm-requirements: sacm-req
+
+[comment]: 
+	# RFC7632: 
+	# I-D.ietf-sacm-requirements: sacm-req
 
 --- abstract
 
@@ -67,7 +73,23 @@ This document describes use cases that describes the need for "TLS proxies".
 
 # Introduction
 
-The current TLS 1.3 specification employs ephemeral techniques that prohibits the means for a "proxy" to be inserted to serve some scenarios.   This document describes some of the use cases to demonstrate the need for such a "proxy" capability.
+Network-based security solutions such as Firewalls (FW) and Intrusion Prevention Systems (IPS) rely on network traffic inspection to implement perimeter-based security policies. A significant portion of these security policies require clear-text traffic inspection above Layer 4, which becomes problematic when traffic is encrypted with Transport Layer Security (TLS) {{RFC5246}}. Today, network-based security solutions typically address this problem by becoming a man-in-the-middle (MITM) for the TLS session according to one of the following two scenarios:
+
+1. Outbound Session, where the TLS session originates from inside the perimeter towards an entity on the outside
+2. Inbound Session, where the TLS session originates from outside the perimeter towards an entity on the inside
+
+For the outbound session scenario, a local root certificate and an accompanying (local) public/private key pair is generated. The local root certificate is installed on the inside entities for which TLS traffic is to be inspected, and the network security device(s) store a copy of the private key. During the TLS handshake, the network security device (hereafter referred to as a TLS proxy) modifies the certificate provided by the (outside) server and (re)signs it with the private key from the local root certificate. From here on, the TLS proxy has visibility into further exchanges between the client and server which enables it to to decrypt and inspect subsequent network traffic. 
+
+For the Inbound session scenario, the TLS proxy is configured with a copy of the local servers' certificate(s) and corresponding private key(s). Based on the server certificate presented, the TLS proxy determines the corresponding private key, which again enables the TLS proxy to gain visibility into further exchanges between the client and server and hence decrypt subsequent network traffic. 
+
+To date, there are a number of use case scenarios that rely on the above capabilities when used with TLS 1.2 {{RFC5246}} or earlier. TLS 1.3 {{I-D.ietf-tls-13}} introduces several changes which prevent a number of these use case scenarios from being satisfied with the types of TLS proxy based capabilities that exist today. 
+
+It has been argued by some, that this should be viewed as a feature of TLS 1.3 and that the proper way of solving these issues is to rely on endpoint (client and server) based solutions instead. We believe this is an overly constrained view of the problem that ignores a number of important real-life use case scenarios. 
+
+The purpose of this document is to provide a representative set of *network based security* use case scenarios that are negatively impacted by TLS 1.3 and do not lend themselves to an endpoint-based alternative solution. For each use case scenario, we highlight the specific aspect(s) of TLS 1.3 that makes the use case problematic with a TLS proxy based solution and we explain why an endpoint-based only solution is not considered acceptable. 
+
+It should be noted that this document is looking only at *security* use cases with a focus on identifying the problematic ones. The document does not offer specific solutions to these; the goal is to stimulate further discussion and explore possible solutions subsequently.
+
 
 ## Requirements notation
 
@@ -79,6 +101,11 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 # TLS 1.3 Overview
 
 Provide a high level overview of TLS 1.3 that highlights how a proxy becomes difficult.
+
+
+The current TLS 1.3 specification employs ephemeral techniques that prohibits the means for a "proxy" to be inserted to serve some scenarios.   This document describes some of the use cases to demonstrate the need for such a "proxy" capability.
+
+
 
 ## Use Case 1 - Acceptable Use Policy (AUP)
 
