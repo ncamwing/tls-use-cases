@@ -100,14 +100,30 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 # TLS 1.3 Overview
 
-Provide a high level overview of TLS 1.3 that highlights how a proxy becomes difficult.
+*[Editor's Note: Provide a high level overview of TLS 1.3 that highlights how a proxy becomes difficult.]*
 
 
 The current TLS 1.3 specification employs ephemeral techniques that prohibits the means for a "proxy" to be inserted to serve some scenarios.   This document describes some of the use cases to demonstrate the need for such a "proxy" capability.
 
 
+# Inbound Session Use Cases
 
-## Use Case 1 - Acceptable Use Policy (AUP)
+
+## Use Case I1 - Data Center Protection
+
+
+## Use Case I2 - Application Operation over NAT
+
+
+## Use Case I3 - Compliance
+
+
+
+# Outbound Session Use Cases
+*[Flemming: Do we actually have a problem with the outbound session use cases ?]*
+
+
+## Use Case O1 - Acceptable Use Policy (AUP)
 
 Enterprises deploy security devices to enforce Acceptable Use Policy (AUP) accroding to the IT and workplace policies.  The security devices, such as firewall/next-gen firewall and web proxy, act as middle boxes to scan traffic in the enterprise network for policy enforcement.
 
@@ -121,7 +137,9 @@ Such enforcements are accomplished by controlling the DNS transactions and HTTP 
 
 The security device requires to access plain text HTTP header for granular AUP control.
 
-## Use Case 2 - Malware and Threat Protection
+*[Flemming: I think we need to clarify why you can't just do this at the endpoint instead]*
+
+## Use Case O2 - Malware and Threat Protection
 
 Enterprises adopt a multi-technology approach when it comes to malware and threat protection for the network assets.  This include solutions deployed on the endpoint, network and cloud.
 
@@ -129,9 +147,41 @@ While endpoint application based solution is effective in protecting from malwar
 
 The network based solutions comprise security devices and applications that scan network traffic for the purpose from malware signatures to 0-day analysis.  The security functions require access to clear text HTTP or other application level streams.
 
-## Use Case 3 - Data Center Protection
+*[Flemming: Again, I think it's key to explain why we can't just adopt an endpoint-based solution. I think the "lower management cost" is speculative].*
 
-## Use Case 4 - Application Operation over NAT
+
+## Use Case O3 - IoT Endpoints
+As the Internet of Everything continues to evolve, more and more endpoints become connected to the Internet. From a security point of view, some of the challenges presented by these are:
+
+* Constrained devices with limited resources (CPU, memory, etc.)
+* Lack of ability to install and update endpoint protection software.
+* Lack of software updates as new vulnerabilities are discovered.
+
+
+
+## Use Case O4 - Unpatched Endpoints
+New vulnerabilities appear constantly and in spite of many advances in recent years in terms of automated software updates, especially in reaction to security vulnerabilities, the fact of the matter is that a very large number of endpoints continue to run versions of software with known vulnerabilities. 
+
+In theory, these endpoints should of course be patched, but in practice, it is often not done which leaves the endpoint open to the vulnerability in question. A network-based security solution can look for attempted exploits of such vulnerabilities and stop them before they reach the unpatched endpoint. 
+
+
+## Use Case O5 - Rapid Containment of New Vulnerability and Campaigns
+When a new vulnerability is discovered or an attack campaign is launched, it is important to patch the vulnerability or contain the campaign as quickly as possible. Patches however are not always available immediately, and even when they are, most endpoints are in practice not patched immediately, which leaves them open to the attack. 
+
+A network-based security solution can look for attempted exploits of such new vulnerabilities or recognize an attack being launched based on security intelligence related to the campaign and stop them before they reach the vulnerable endpoint. 
+
+
+## Use Case O6 - End-of-Life Endpoint
+Older endpoints (and in some cases even new ones) will not receive any software updates. As new vulnerabilities inevitably are discovered, these endpoints will be vulnerable to exploits. 
+
+A network-based security solution can help prevent such exploits.
+
+
+## Use Case O7 - Compliance
+
+
+
+
 
 
 
