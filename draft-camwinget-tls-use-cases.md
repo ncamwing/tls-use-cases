@@ -57,6 +57,9 @@ normative:
 	#  I-D.ietf-sacm-architecture-13:
 
 informative:
+	I-D.green-tls-static-dh-in-tls13
+	I-D.ietf-tls-sni-encryption
+	RFC5077
 
 [comment]: 
 	# RFC7632: 
@@ -98,12 +101,71 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "OPTIONAL" in this document are to be interpreted as described in RFC
 2119, BCP 14 {{RFC2119}}.
 
-# TLS 1.3 Overview
+# TLS 1.3 Change Impact Overview
 
 *[Editor's Note: Provide a high level overview of TLS 1.3 that highlights how a proxy becomes difficult.]*
 
+TlS 1.3 introduces several changes to TLS 1.2 in order to improve the overall privacy and security of TLS, however in doing so, some of the changes have a negative impact on network based security. In this section, we describe the TLS 1.3 changes that negatively impact network based security solutions. We divide the changes into two groups; those that impact inbound sessions and those that impact outbound sessions.  
 
-The current TLS 1.3 specification employs ephemeral techniques that prohibits the means for a "proxy" to be inserted to serve some scenarios.   This document describes some of the use cases to demonstrate the need for such a "proxy" capability.
+##Inbound Session Change Impacts
+
+###Removal of Static RSA and Diffie-Hellman Cipher Suites
+TLS 1.2 supports static RSA and Diffie-Hellman cipher suites, which enables the server's private key to be shared with server-side middle-boxes. TLS 1.3 has removed support for these cipher suites in favor of ephemeral mode Diffie-Hellman in order to provide perfect forward secrecy (PFS). As a result of this, it is no longer possible for a server to share a key with the middlebox a priori, which in turn implies that the middlebox cannot gain access to the TLS session data. 
+
+Example scenarios that are impacted by this include network monitoring, troubleshooting, compliance, etc. 
+
+For further details (and a suggestion solution), please refer to {{I-D.green-tls-static-dh-in-tls13}}.
+
+
+
+##Outbound Session Change Impacts
+
+
+###Encrypted Server Certificate
+In TLS 1.2, the ClientHello message is sent to the server's transport address (IP and port). The ClientHello message may include the Server Name Indication (SNI) to specify the actual server the client wishes to contact. This is useful when multiple "virtual servers" are hosted on a given transport address (IP and port). It also provides information about the domain the client is attempting to reach. 
+
+The server replies with a ServerHello message, which contains the selected connection parameters, followed by a Certificate message, which contains the server's certificate and hence its identity. 
+
+In TLS 1.2, the ClientHello, ServerHello and Certificate messages are all sent in clear-text, however in TLS 1.3, the Certificate message is encrypted thereby hiding the server identity from any intermediary. Note that even *if* the SNI is provided (in cleartext) by the client, there is no guarantee that the actual server responding is the one indicated in the SNI from the client. 
+
+Example scenarios that are impacted by this involve selective network security, such as whitelists or blacklists based on security intelligence, regulatory requirements, categories (e.g. finanicial services), etc. An added challenge is that some of these scenarios require the middlebox to perform inspection, whereas other scenarios require the middlebox to not perform inspection.
+
+
+###Resumption and Pre-Shared Key 
+In TLS 1.2 and below, session resumption is provided by "session IDs" and "session tickets" {{RFC5077}}. If the server does not want to honor a ticket, then it can simply initiate a full TLS handshake with the client as usual. 
+
+In TLS 1.3, the above mechanism is replaced by Pre-Shared Keys (PSK), which can be negotiated as part of an initial handshake and then used in a subsequent handshake to perform resumption using the PSK. TLS 1.3 states that the client SHOULD include a "key_share" extension to enable the server to decline resumption and fall back to a full handshake, however it is not an absolute requirement. 
+
+Example scenarios that are impacted by this are middleboxes that were not part of the initial handshake, and hence do not know the PSK. If the client does not include the "key_share" extension the middlebox cannot force a fallback to the full handshake. If the middlebox is required to inspect the session, it will have to fail the connection instead. 
+ 
+
+
+###Version Downgrade Protection
+In TLS, the ClientHello message includes a list of supported protocol versions. The server will select the highest supported version and indicate its choice in the ServerHello message. 
+
+In TLS 1.3, the random value in the ServerHello message includes a special value in the last eight bytes when the server negotiates either TLS 1.2 or TLS 1.1 and below. The special value(s) enable a TLS 1.3 client to detect an active attacker launching a downgrade attack when the client did indeed reach a TLS 1.3 server, provided ephemeral ciphers are being used.
+
+From a network security point of view, the primary impact of this change is that it requires the middlebox to be an active man-in-the-middle. This is not different from current behavior of middleboxes, as long as the middlebox effectively proxies between a client-to-middlebox and a middlebox-to-server TLS connection.
+
+*[Editor's note: I'm not sure there is really any new middlebox issue here, but maybe I missed something]*
+
+
+
+###1-RTT Handshake
+*[Editor's note: This is essentially the resumption scenario with PSK (with optional fallback to the full handshake) - I don't believe there are any other issues here]*
+
+
+###0-RTT Data
+*[Editor's note: I don't believe there are any specific middlebox issues here - it's basically the same as resumption using PSK]*
+ 
+
+###SNI Encryption in TLS Through Tunneling
+As noted above, with server certificates encrypted, the Server Name Indication (SNI) in the ClientHello message is the only information available in cleartext to indicate the client's targeted server, and the actual server reached may differ. 
+
+{{I-D.ietf-tls-sni-encryption}} proposes to hide the SNI in the ClientHello from middleboxes. 
+
+Example scenarios that are impacted by this involve selective network security, such as whitelists or blacklists based on security intelligence, regulatory requirements, categories (e.g. financial services), etc. An added challenge is that some of these scenarios require the middlebox to perform inspection, whereas other scenarios require the middlebox to not perform inspection, however without the SNI, the middlebox may not have the information required to determine the actual scenario before it is too late.
+
 
 
 # Inbound Session Use Cases
