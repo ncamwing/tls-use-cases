@@ -1,4 +1,5 @@
 ---
+
 title: TLS Use Cases
 docname: draft-camwinget-tls-use-cases
 date: 2017-08-25
@@ -7,14 +8,19 @@ ipr: trust200902
 area: security
 wg: TLS
 kw: Internet-Draft
-cat: informational
+cat: info
 
 coding: us-ascii
+
+
 pi:
-   toc: yes
-   sortrefs: yes
-   symrefs: yes
-   comments: yes
+    rfcedstyle: yes
+    docmapping: yes
+    strict: yes
+    toc: yes
+    sortrefs: yes
+    symrefs: yes
+    comments: yes
 
 author:
 - ins: N. Cam-Winget
@@ -48,22 +54,16 @@ author:
 normative:
   RFC2119: 
   RFC5246: 
-  I-D.ietf-tls-tls13
+  I-D.ietf-tls-tls13:
 
-[comment]: 
-	#  RFC3635: 
-	#  RFC1573: 
-	#  I-D.greevenbosch-appsawg-cbor-cddl: cddl 
-	#  I-D.ietf-sacm-architecture-13:
 
 informative:
-	I-D.green-tls-static-dh-in-tls13
-	I-D.ietf-tls-sni-encryption
-	RFC5077
+  I-D.green-tls-static-dh-in-tls13:
+  I-D.ietf-tls-sni-encryption:
+  RFC5077:
 
-[comment]: 
-	# RFC7632: 
-	# I-D.ietf-sacm-requirements: sacm-req
+
+
 
 --- abstract
 
@@ -85,7 +85,7 @@ For the outbound session scenario, a local root certificate and an accompanying 
 
 For the Inbound session scenario, the TLS proxy is configured with a copy of the local servers' certificate(s) and corresponding private key(s). Based on the server certificate presented, the TLS proxy determines the corresponding private key, which again enables the TLS proxy to gain visibility into further exchanges between the client and server and hence decrypt subsequent network traffic. 
 
-To date, there are a number of use case scenarios that rely on the above capabilities when used with TLS 1.2 {{RFC5246}} or earlier. TLS 1.3 {{I-D.ietf-tls-13}} introduces several changes which prevent a number of these use case scenarios from being satisfied with the types of TLS proxy based capabilities that exist today. 
+To date, there are a number of use case scenarios that rely on the above capabilities when used with TLS 1.2 {{RFC5246}} or earlier. TLS 1.3 {{I-D.ietf-tls-tls13}} introduces several changes which prevent a number of these use case scenarios from being satisfied with the types of TLS proxy based capabilities that exist today. 
 
 It has been argued by some, that this should be viewed as a feature of TLS 1.3 and that the proper way of solving these issues is to rely on endpoint (client and server) based solutions instead. We believe this is an overly constrained view of the problem that ignores a number of important real-life use case scenarios. 
 
@@ -103,7 +103,9 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 
 # TLS 1.3 Change Impact Overview
 
+{::comment}
 *[Editor's Note: Provide a high level overview of TLS 1.3 that highlights how a proxy becomes difficult.]*
+{:/comment}
 
 TlS 1.3 introduces several changes to TLS 1.2 in order to improve the overall privacy and security of TLS, however in doing so, some of the changes have a negative impact on network based security. In this section, we describe the TLS 1.3 changes that negatively impact network based security solutions. We divide the changes into two groups; those that impact inbound sessions and those that impact outbound sessions.  
 
@@ -147,17 +149,19 @@ In TLS 1.3, the random value in the ServerHello message includes a special value
 
 From a network security point of view, the primary impact of this change is that it requires the middlebox to be an active man-in-the-middle. This is not different from current behavior of middleboxes, as long as the middlebox effectively proxies between a client-to-middlebox and a middlebox-to-server TLS connection.
 
+{::comment}
 *[Editor's note: I'm not sure there is really any new middlebox issue here, but maybe I missed something]*
-
-
+{:/comment}
 
 ###1-RTT Handshake
+{::comment}
 *[Editor's note: This is essentially the resumption scenario with PSK (with optional fallback to the full handshake) - I don't believe there are any other issues here]*
-
+{:/comment}
 
 ###0-RTT Data
+{::comment}
 *[Editor's note: I don't believe there are any specific middlebox issues here - it's basically the same as resumption using PSK]*
- 
+{:/comment} 
 
 ###SNI Encryption in TLS Through Tunneling
 As noted above, with server certificates encrypted, the Server Name Indication (SNI) in the ClientHello message is the only information available in cleartext to indicate the client's targeted server, and the actual server reached may differ. 
@@ -182,8 +186,9 @@ Example scenarios that are impacted by this involve selective network security, 
 
 
 # Outbound Session Use Cases
+{::comment}
 *[Flemming: Do we actually have a problem with the outbound session use cases ?]*
-
+{:/comment}
 
 ## Use Case O1 - Acceptable Use Policy (AUP)
 
@@ -199,7 +204,9 @@ Such enforcements are accomplished by controlling the DNS transactions and HTTP 
 
 The security device requires to access plain text HTTP header for granular AUP control.
 
+{::comment}
 *[Flemming: I think we need to clarify why you can't just do this at the endpoint instead]*
+{:/comment}
 
 ## Use Case O2 - Malware and Threat Protection
 
@@ -209,8 +216,9 @@ While endpoint application based solution is effective in protecting from malwar
 
 The network based solutions comprise security devices and applications that scan network traffic for the purpose from malware signatures to 0-day analysis.  The security functions require access to clear text HTTP or other application level streams.
 
+{::comment}
 *[Flemming: Again, I think it's key to explain why we can't just adopt an endpoint-based solution. I think the "lower management cost" is speculative].*
-
+{:/comment}
 
 ## Use Case O3 - IoT Endpoints
 As the Internet of Everything continues to evolve, more and more endpoints become connected to the Internet. From a security point of view, some of the challenges presented by these are:
