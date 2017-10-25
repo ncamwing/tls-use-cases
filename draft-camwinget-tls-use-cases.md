@@ -1,8 +1,8 @@
 ---
 
-title: TLS Use Cases
+title: TLS 1.3 Impact on Network-Based Security
 docname: draft-camwinget-tls-use-cases
-date: 2017-08-25
+date: 2017-10-25
 
 ipr: trust200902
 area: security
@@ -61,22 +61,43 @@ informative:
   I-D.green-tls-static-dh-in-tls13:
   I-D.ietf-tls-sni-encryption:
   RFC5077:
+  HTTPSintercept:
+  	target: https://jhalderm.com/pub/papers/interception-ndss17.pdf
+	title: The Security Impact of HTTPS Interception
+	author:
+	- ins: Z. Durumeric
+	- ins: Z. Ma
+	- ins: D. Springall
+	- ins: R. Barnes
+	- ins: N. Sullivan
+	- ins: E. Bursztein
+	- ins: M. Mailey
+	- ins: J. Halderman
+	- ins: V. Paxson
+	date: February 2017
+  BreakTLS:
+	title: "Triple Handshakes and Cookie Cutters: Breaking and Fixing Authentication over TLS"
+  	author:
+  	- ins: K. Bhargavan
+  	- ins: A. Delignat-Lavaud
+  	- ins: C. Fournet
+  	- ins: A. Pironti
+  	- ins: P. Strub
+  	date: 2014
+  	seriesinfo: "IEEE Symposium on Security and Privacy"
 
 
 
 
 --- abstract
 
-This is a placeholder:
-This document describes use cases that describes the need for "TLS proxies".
-
-
+TLS 1.3 introduces several changes to TLS 1.2 in order to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may negatively impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions. 
 
 --- middle
 
 # Introduction
 
-Network-based security solutions such as Firewalls (FW) and Intrusion Prevention Systems (IPS) rely on network traffic inspection to implement perimeter-based security policies. A significant portion of these security policies require clear-text traffic inspection above Layer 4, which becomes problematic when traffic is encrypted with Transport Layer Security (TLS) {{RFC5246}}. Today, network-based security solutions typically address this problem by becoming a man-in-the-middle (MITM) for the TLS session according to one of the following two scenarios:
+Network-based security solutions such as Firewalls (FW) and Intrusion Prevention Systems (IPS) rely on network traffic inspection to implement perimeter-based security policies. Depending on the security functions required, these middleboxes can either be deployed as traffic monitoring devices or active in-line devices. A traffic monitoring middlebox may for example perform vulnerability detection, intrusion detection, crypto audit, compliance monitoring, etc. An active in-line middlebox may for example prevent malware download, block known malicous URLs, enforce use of strong ciphers, stop data exfiltration, etc. A significant portion of such security policies require clear-text traffic inspection above Layer 4, which becomes problematic when traffic is encrypted with Transport Layer Security (TLS) {{RFC5246}}. Today, network-based security solutions typically address this problem by becoming a man-in-the-middle (MITM) for the TLS session according to one of the following two scenarios:
 
 1. Outbound Session, where the TLS session originates from inside the perimeter towards an entity on the outside
 2. Inbound Session, where the TLS session originates from outside the perimeter towards an entity on the inside
@@ -87,7 +108,7 @@ For the Inbound session scenario, the TLS proxy is configured with a copy of the
 
 To date, there are a number of use case scenarios that rely on the above capabilities when used with TLS 1.2 {{RFC5246}} or earlier. TLS 1.3 {{I-D.ietf-tls-tls13}} introduces several changes which prevent a number of these use case scenarios from being satisfied with the types of TLS proxy based capabilities that exist today. 
 
-It has been argued by some, that this should be viewed as a feature of TLS 1.3 and that the proper way of solving these issues is to rely on endpoint (client and server) based solutions instead. We believe this is an overly constrained view of the problem that ignores a number of important real-life use case scenarios. 
+Currently deployed TLS proxies (middleboxes) may reduce the security of the TLS connection itself due to a combination of poor implementation and configuration {{HTTPSintercept}}, and they may compromise privacy when decrypting a TLS session. As such, it has been argued that preventing TLS proxies from working should be viewed as a feature of TLS 1.3 and that the proper way of solving these issues is to rely on endpoint (client and server) based solutions instead. We believe this is an overly constrained view of the problem that ignores a number of important real-life use case scenarios that improve the overall security posture. We also note that current endpoint-based TLS proxies suffer from many of the same security issues as the network-based TLS proxies (middleboxes) {{HTTPSintercept}}.  
 
 The purpose of this document is to provide a representative set of *network based security* use case scenarios that are negatively impacted by TLS 1.3 and do not lend themselves to an endpoint-based alternative solution. For each use case scenario, we highlight the specific aspect(s) of TLS 1.3 that makes the use case problematic with a TLS proxy based solution and we explain why an endpoint-based only solution is not considered acceptable. 
 
@@ -184,6 +205,11 @@ Example scenarios that are impacted by this involve selective network security, 
 ## Use Case I3 - Compliance
 
 
+## Use Case I4 - Crypto Security Audit  {#InboundCryptoSecurityAudit}
+Organizations may have policies around acceptable ciphers and certificates on their servers. Examples include no use of self-signed certificates, black or white-list Certificate Authority, etc. In TLS 1.2, the Certificate message was sent in clear-text, however in TLS 1.3 the message is encrypted thereby preventing either a network-based audit or policy enforcement around acceptable server certificates. 
+
+While the audits and policy enforcements could in theory be done on the servers themselves, the premise of the use case is that not all servers are configured correctly and hence such an approach is unlikely to work in practice. A common example where this occurs includes lab servers. 
+
 
 # Outbound Session Use Cases
 {::comment}
@@ -191,7 +217,6 @@ Example scenarios that are impacted by this involve selective network security, 
 {:/comment}
 
 ## Use Case O1 - Acceptable Use Policy (AUP)
-
 Enterprises deploy security devices to enforce Acceptable Use Policy (AUP) accroding to the IT and workplace policies.  The security devices, such as firewall/next-gen firewall and web proxy, act as middle boxes to scan traffic in the enterprise network for policy enforcement.
 
 Sample AUP policies are:
@@ -251,8 +276,12 @@ A network-based security solution can help prevent such exploits.
 
 
 
+## Use Case O8 - Crypto Security Audit
+This is a variation of the use in {{InboundCryptoSecurityAudit}}
 
+Organizations may have policies around acceptable ciphers and certificates for client sessions, possibly based on the destination. Examples include no use of self-signed certificates, black or white-list Certificate Authority, etc. In TLS 1.2, the Certificate message was sent in clear-text, however in TLS 1.3 the message is encrypted thereby preventing either a network-based audit or policy enforcement around acceptable server certificates. 
 
+While the audits and policy enforcements could in theory be done on the clients themselves, not all clients are configured correctly and may not even be directly under configuration control of the organization in question (e.g. due to Bring Your Own Device). 
 
 
 #  IANA considerations
@@ -265,7 +294,7 @@ TBD
 
 #  Acknowledgements
 
-TBD
+David McGrew provided the Security Audit use cases.
 
 #  Change Log
 
