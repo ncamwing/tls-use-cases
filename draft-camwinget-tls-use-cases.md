@@ -198,8 +198,17 @@ Example scenarios that are impacted by this involve selective network security, 
 
 ## Use Case I1 - Data Center Protection
 
+Services deployed in data center may be offered for access by external and untrusted hosts.  Network security functions such as IPS and WAF are deployed to monitor and control the transactions to the services.  Application level load balancer is not a security function strictly speaking but is also an important function in front of the services.
+
+Network security function are usually deployed in two modes, monitoring and inline.  In either case, they need to access the L7 and application data such as HTTP transactions which could be protected by TLS encryption.  They may monitor the TLS handshakes for additional visibility and control.
 
 ## Use Case I2 - Application Operation over NAT
+
+The NAT function translates L3 and L4 addresses and ports as the packet traverses the network device.  Sophisticate NAT devices also implement application inspection engines to correct the L3/L4 data embedded in the control messages (e.g., FTP control message, SIP signaling messages) so that they are consistent with the outer L3/L4 headers.
+
+Without the correction, the secondary data (FTP) or media (SIP) connections will likely reach a wrong destination.
+
+The embedded address and port correction operation requires access to the L7 payload which could be protected by encryption.
 
 
 ## Use Case I3 - Compliance
