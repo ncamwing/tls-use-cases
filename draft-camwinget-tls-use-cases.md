@@ -184,6 +184,17 @@ From a network security point of view, the primary impact of this change is that
 *[Editor's note: I don't believe there are any specific middlebox issues here - it's basically the same as resumption using PSK]*
 {:/comment} 
 
+###Ability to Disengage Middlebox Proxy
+Network security middleboxes intercept or proxy TLS sessions for acceptable use, protocl inspection, malware scanning and other purposes.  The following section will describe the use cases in detail.
+
+For compliance and privacy reasons, middleboxes must be able to engage and disengage the proxy function seamlessly without affecting user experience. For example, privacy law may prohibit middleboxes from intercepting banking traffic even if it is within the enterprise network and outbound network traffic is subject to inspection legally.
+
+There are several techniques that can be utilized.  Those techniques function with TLS 1.2 and earlier versions but not with TLS 1.3.
+
+One technique is for the middlebox to negotiate the same master secret with the original TLS client and server, as if the two endpoints handshake directly. This is also known as "Triple Handshake" used by leditimate middleboxes. {{BreakTLS}} describes the methods with RSA and DH key exchanges.  When the proxy session keys are the same as direct handshake, the middlebox is able to "cut-through" the two TLS proxy sessions when it finishes the security inspection.
+
+This technique is not functional with TLS 1.3 with session hash as part of the key deriviation procedure.
+
 ###SNI Encryption in TLS Through Tunneling
 As noted above, with server certificates encrypted, the Server Name Indication (SNI) in the ClientHello message is the only information available in cleartext to indicate the client's targeted server, and the actual server reached may differ. 
 
