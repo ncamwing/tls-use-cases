@@ -85,6 +85,10 @@ informative:
   	- ins: P. Strub
   	date: 2014
   	seriesinfo: "IEEE Symposium on Security and Privacy"
+  PCI-DSS:
+    title: "Payment Card Industry (PCI): Data Security Standard"
+    date: Aprpil 2016
+    target: https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-2.pdf
 
 
 
@@ -223,7 +227,22 @@ The embedded address and port correction operation requires access to the L7 pay
 
 
 ## Use Case I3 - Compliance
+Many regulations exist today that include cyber security requirements
+that require close inspection of the information traversing through
+the network.  For example, organizations that require PCI-DSS {{PCI-DSS}}
+compliance must provide the ability to regularly monitor the network
+to prevent, detect and minimize impact of a data compromise.  {{PCI-DSS}}
+Requirement #2 (and Appendix A2 as it concerns TLS) describes the
+need to be able to detect protocol and protocol usage correctness.
+Further, {{PCI-DSS}} Requirement #10 detailing monitoring capabilities also
+describe the need to provide network-based audit to ensure that the
+protocols and configurations are properly used.
 
+Deployments today still use factory or default credentials and
+settings that must be observed, and to meet regulatory compliance,
+must be audited, logged and reported.  As the server (certificate)
+credential is now encrypted in TLS 1.3, the ability to verify the
+appropriate (or compliant) use of these credentials are lost.
 
 ## Use Case I4 - Crypto Security Audit  {#InboundCryptoSecurityAudit}
 Organizations may have policies around acceptable ciphers and certificates on their servers. Examples include no use of self-signed certificates, black or white-list Certificate Authority, etc. In TLS 1.2, the Certificate message was sent in clear-text, however in TLS 1.3 the message is encrypted thereby preventing either a network-based audit or policy enforcement around acceptable server certificates. 
