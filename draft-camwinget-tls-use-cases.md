@@ -189,15 +189,15 @@ From a network security point of view, the primary impact of this change is that
 {:/comment} 
 
 ###Ability to Disengage Middlebox Proxy
-Network security middleboxes intercept or proxy TLS sessions for acceptable use, protocl inspection, malware scanning and other purposes.  The following section will describe the use cases in detail.
+Network security middleboxes intercept or proxy TLS sessions for acceptable usepolicy, protocol inspection, malware scanning and other purposes.  The following section will describe the use cases in detail.
 
 For compliance and privacy reasons, middleboxes must be able to engage and disengage the proxy function seamlessly without affecting user experience. For example, privacy law may prohibit middleboxes from intercepting banking traffic even if it is within the enterprise network and outbound network traffic is subject to inspection legally.
 
 There are several techniques that can be utilized.  Those techniques function with TLS 1.2 and earlier versions but not with TLS 1.3.
 
-One technique is for the middlebox to negotiate the same master secret with the original TLS client and server, as if the two endpoints handshake directly. This is also known as "Triple Handshake" used by leditimate middleboxes. {{BreakTLS}} describes the methods with RSA and DH key exchanges.  When the proxy session keys are the same as direct handshake, the middlebox is able to "cut-through" the two TLS proxy sessions when it finishes the security inspection.
+One technique is for the middlebox to negotiate the same master secret with the original TLS client and server, as if the two endpoints handshake directly. This is also known as "Triple Handshake" used by legitimate middleboxes. {{BreakTLS}} describes the methods with RSA and DH key exchanges.  When the proxy session keys are the same as direct handshake, the middlebox is able to "cut-through" the two TLS proxy sessions when it finishes the security inspection.
 
-This technique is not functional with TLS 1.3 with session hash as part of the key deriviation procedure.
+This technique is not functional with TLS 1.3 with session hash as part of the key derivation procedure.
 
 ###SNI Encryption in TLS Through Tunneling
 As noted above, with server certificates encrypted, the Server Name Indication (SNI) in the ClientHello message is the only information available in cleartext to indicate the client's targeted server, and the actual server reached may differ. 
@@ -217,6 +217,8 @@ Services deployed in data center may be offered for access by external and untru
 
 Network security function are usually deployed in two modes, monitoring and inline.  In either case, they need to access the L7 and application data such as HTTP transactions which could be protected by TLS encryption.  They may monitor the TLS handshakes for additional visibility and control.
 
+The TLS handshake monitoring function will be impacted by TLS 1.3.
+
 ## Use Case I2 - Application Operation over NAT
 
 The NAT function translates L3 and L4 addresses and ports as the packet traverses the network device.  Sophisticate NAT devices also implement application inspection engines to correct the L3/L4 data embedded in the control messages (e.g., FTP control message, SIP signaling messages) so that they are consistent with the outer L3/L4 headers.
@@ -224,6 +226,8 @@ The NAT function translates L3 and L4 addresses and ports as the packet traverse
 Without the correction, the secondary data (FTP) or media (SIP) connections will likely reach a wrong destination.
 
 The embedded address and port correction operation requires access to the L7 payload which could be protected by encryption.
+
+TLS 1.3 will not prevent the middlebox from performing this function, however, once starting the proxy function, the middlebox is not able to remove itself from the packet path for the particular session.
 
 
 ## Use Case I3 - Compliance
@@ -256,32 +260,45 @@ While the audits and policy enforcements could in theory be done on the servers 
 {:/comment}
 
 ## Use Case O1 - Acceptable Use Policy (AUP)
-Enterprises deploy security devices to enforce Acceptable Use Policy (AUP) accroding to the IT and workplace policies.  The security devices, such as firewall/next-gen firewall and web proxy, act as middle boxes to scan traffic in the enterprise network for policy enforcement.
+Enterprises deploy security devices to enforce Acceptable Use Policy (AUP) according to the IT and workplace policies.  The security devices, such as firewall/next-gen firewall, web proxy and an application on the endpoints, act as middle boxes to scan traffic in the enterprise network for policy enforcement.
 
 Sample AUP policies are:
 
-"Employess are not allowed to access 'gaming' websites from enterprise network"
+"Employees are not allowed to access 'gaming' websites from enterprise network"
 
 "Temporary workers are not allowed to use enterprise network to upload video clips to Internet, but are allowed to watch video clips"
 
-Such enforcements are accomplished by controlling the DNS transactions and HTTP transactions.  A coase control is achieved by controlling the DNS response, however, in many cases, granular control is required at HTTP URL or Method levels, to distinguish a specific web page on a hosting site, or to differentiate between uploading and downloading operations.
+Such enforcements are accomplished by controlling the DNS transactions and HTTP transactions.  A coarse control is achieved by controlling the DNS response, however, in many cases, granular control is required at HTTP URL or Method levels, to distinguish a specific web page on a hosting site, or to differentiate between uploading and downloading operations.
 
-The security device requires to access plain text HTTP header for granular AUP control.
+The security device requires to access plain text HTTP header for granular AUP control. For traffic passing the AUP check, the middlebox is also required to cut through the rest of the traffic without decryption, for performance and privacy reasons.
+
+The cut-through action is possible with up to TLS 1.2 but will not work with TLS 1.3.
 
 {::comment}
 *[Flemming: I think we need to clarify why you can't just do this at the endpoint instead]*
+{:/comment}
+
+{::comment}
+*[Eric: Added for endpoints.  It is the same challenge.]*
 {:/comment}
 
 ## Use Case O2 - Malware and Threat Protection
 
 Enterprises adopt a multi-technology approach when it comes to malware and threat protection for the network assets.  This include solutions deployed on the endpoint, network and cloud.
 
-While endpoint application based solution is effective in protecting from malware and virus attecks, enterprises prefer to deploy multiple technologies for a multi-layer protection.  Network based solutions provide such additional protection with benefits including lower manangement costs.
+While endpoint application based solution is effective in protecting from malware and virus attacks, enterprises prefer to deploy multiple technologies for a multi-layer protection.  Network based solutions provide such additional protection with the benefit of rapid and centralized updates.
 
-The network based solutions comprise security devices and applications that scan network traffic for the purpose from malware signatures to 0-day analysis.  The security functions require access to clear text HTTP or other application level streams.
+The network based solutions comprise security devices and applications that scan network traffic for the purpose from malware signatures to 0-day analysis.
+
+The security functions require access to clear text HTTP or other application level streams on a needed basis.  After a successful scan the traffic should be allowed to flow through without being decrypted continuously.  This is not possible with TLS 1.3.
+
 
 {::comment}
 *[Flemming: Again, I think it's key to explain why we can't just adopt an endpoint-based solution. I think the "lower management cost" is speculative].*
+{:/comment}
+
+{::comment}
+*[Eric: Revised the statement.  The network based approach complements other solutions].*
 {:/comment}
 
 ## Use Case O3 - IoT Endpoints
