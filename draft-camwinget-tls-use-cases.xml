@@ -64,7 +64,7 @@
       </address>
     </author>
 
-    <date year="2017" month="October" day="25"/>
+    <date year="2017" month="October" day="27"/>
 
     <area>security</area>
     <workgroup>TLS</workgroup>
@@ -73,7 +73,7 @@
     <abstract>
 
 
-<t>TLS 1.3 introduces several changes to TLS 1.2 in order to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may negatively impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions.</t>
+<t>TLS 1.3 introduces several changes to TLS 1.2 in order to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions.</t>
 
 
 
@@ -90,17 +90,17 @@
 <t>Network-based security solutions such as Firewalls (FW) and Intrusion Prevention Systems (IPS) rely on network traffic inspection to implement perimeter-based security policies. Depending on the security functions required, these middleboxes can either be deployed as traffic monitoring devices or active in-line devices. A traffic monitoring middlebox may for example perform vulnerability detection, intrusion detection, crypto audit, compliance monitoring, etc. An active in-line middlebox may for example prevent malware download, block known malicous URLs, enforce use of strong ciphers, stop data exfiltration, etc. A significant portion of such security policies require clear-text traffic inspection above Layer 4, which becomes problematic when traffic is encrypted with Transport Layer Security (TLS) <xref target="RFC5246"/>. Today, network-based security solutions typically address this problem by becoming a man-in-the-middle (MITM) for the TLS session according to one of the following two scenarios:</t>
 
 <t><list style="numbers">
-  <t>Outbound Session, where the TLS session originates from inside the perimeter towards an entity on the outside</t>
-  <t>Inbound Session, where the TLS session originates from outside the perimeter towards an entity on the inside</t>
+  <t>Outbound Session, where the TLS session originates from a client inside the perimeter towards an entity on the outside</t>
+  <t>Inbound Session, where the TLS session originates from a client outside the perimeter towards an entity on the inside</t>
 </list></t>
 
-<t>For the outbound session scenario, a local root certificate and an accompanying (local) public/private key pair is generated. The local root certificate is installed on the inside entities for which TLS traffic is to be inspected, and the network security device(s) store a copy of the private key. During the TLS handshake, the network security device (hereafter referred to as a TLS proxy) modifies the certificate provided by the (outside) server and (re)signs it with the private key from the local root certificate. From here on, the TLS proxy has visibility into further exchanges between the client and server which enables it to to decrypt and inspect subsequent network traffic.</t>
+<t>For the outbound session scenario, MITM is enabled by generating a local root certificate and an accompanying (local) public/private key pair. The local root certificate is installed on the inside entities for which TLS traffic is to be inspected, and the network security device(s) store a copy of the private key. During the TLS handshake, the network security device (hereafter referred to as a TLS proxy) modifies the certificate provided by the (outside) server and (re)signs it with the private key from the local root certificate. From here on, the TLS proxy has visibility into further exchanges between the client and server which enables it to to decrypt and inspect subsequent network traffic.</t>
 
-<t>For the Inbound session scenario, the TLS proxy is configured with a copy of the local servers' certificate(s) and corresponding private key(s). Based on the server certificate presented, the TLS proxy determines the corresponding private key, which again enables the TLS proxy to gain visibility into further exchanges between the client and server and hence decrypt subsequent network traffic.</t>
+<t>For the inbound session scenario, the TLS proxy is configured with a copy of the local servers' certificate(s) and corresponding private key(s). Based on the server certificate presented, the TLS proxy determines the corresponding private key, which again enables the TLS proxy to gain visibility into further exchanges between the client and server and hence decrypt subsequent network traffic.</t>
 
 <t>To date, there are a number of use case scenarios that rely on the above capabilities when used with TLS 1.2 <xref target="RFC5246"/> or earlier. TLS 1.3 <xref target="I-D.ietf-tls-tls13"/> introduces several changes which prevent a number of these use case scenarios from being satisfied with the types of TLS proxy based capabilities that exist today.</t>
 
-<t>Currently deployed TLS proxies (middleboxes) may reduce the security of the TLS connection itself due to a combination of poor implementation and configuration <xref target="HTTPSintercept"/>, and they may compromise privacy when decrypting a TLS session. As such, it has been argued that preventing TLS proxies from working should be viewed as a feature of TLS 1.3 and that the proper way of solving these issues is to rely on endpoint (client and server) based solutions instead. We believe this is an overly constrained view of the problem that ignores a number of important real-life use case scenarios that improve the overall security posture. We also note that current endpoint-based TLS proxies suffer from many of the same security issues as the network-based TLS proxies (middleboxes) <xref target="HTTPSintercept"/>.</t>
+<t>It has been noted, that currently deployed TLS proxies (middleboxes) may reduce the security of the TLS connection itself due to a combination of poor implementation and configuration, and they may compromise privacy when decrypting a TLS session. As such, it has been argued that preventing TLS proxies from working should be viewed as a feature of TLS 1.3 and that the proper way of solving these issues is to rely on endpoint (client and server) based solutions instead. We believe this is an overly constrained view of the problem that ignores a number of important real-life use case scenarios that improve the overall security posture. We also note that current endpoint-based TLS proxies suffer from many of the same security issues as the network-based TLS proxies do <xref target="HTTPSintercept"/>.</t>
 
 <t>The purpose of this document is to provide a representative set of <spanx style="emph">network based security</spanx> use case scenarios that are negatively impacted by TLS 1.3 and do not lend themselves to an endpoint-based alternative solution. For each use case scenario, we highlight the specific aspect(s) of TLS 1.3 that makes the use case problematic with a TLS proxy based solution and we explain why an endpoint-based only solution is not considered acceptable.</t>
 
@@ -118,7 +118,7 @@
 <section anchor="tls-13-change-impact-overview" title="TLS 1.3 Change Impact Overview">
 
 
-<t>TlS 1.3 introduces several changes to TLS 1.2 in order to improve the overall privacy and security of TLS, however in doing so, some of the changes have a negative impact on network based security. In this section, we describe the TLS 1.3 changes that negatively impact network based security solutions. We divide the changes into two groups; those that impact inbound sessions and those that impact outbound sessions.</t>
+<t>TlS 1.3 introduces several changes to TLS 1.2 in order to improve the overall privacy and security of TLS, however in doing so, some of the changes have a negative impact on network based security. In this section, we describe those TLS 1.3 changes and briefly outline some scenario impacts. We divide the changes into two groups; those that impact inbound sessions and those that impact outbound sessions.</t>
 
 <section anchor="inbound-session-change-impacts" title="Inbound Session Change Impacts">
 
@@ -127,7 +127,7 @@
 
 <t>Example scenarios that are impacted by this include network monitoring, troubleshooting, compliance, etc.</t>
 
-<t>For further details (and a suggestion solution), please refer to <xref target="I-D.green-tls-static-dh-in-tls13"/>.</t>
+<t>For further details (and a suggested solution), please refer to <xref target="I-D.green-tls-static-dh-in-tls13"/>.</t>
 
 </section>
 </section>
@@ -140,7 +140,7 @@
 
 <t>In TLS 1.2, the ClientHello, ServerHello and Certificate messages are all sent in clear-text, however in TLS 1.3, the Certificate message is encrypted thereby hiding the server identity from any intermediary. Note that even <spanx style="emph">if</spanx> the SNI is provided (in cleartext) by the client, there is no guarantee that the actual server responding is the one indicated in the SNI from the client.</t>
 
-<t>Example scenarios that are impacted by this involve selective network security, such as whitelists or blacklists based on security intelligence, regulatory requirements, categories (e.g. finanicial services), etc. An added challenge is that some of these scenarios require the middlebox to perform inspection, whereas other scenarios require the middlebox to not perform inspection.</t>
+<t>Example scenarios that are impacted by this involve selective network security, such as whitelists or blacklists based on security intelligence, regulatory requirements, categories (e.g. finanicial services), etc. An added challenge is that some of these scenarios require the middlebox to perform inspection, whereas other scenarios require the middlebox to <spanx style="emph">not</spanx> perform inspection.</t>
 
 </section>
 <section anchor="resumption-and-pre-shared-key" title="Resumption and Pre-Shared Key">
@@ -148,22 +148,30 @@
 
 <t>In TLS 1.3, the above mechanism is replaced by Pre-Shared Keys (PSK), which can be negotiated as part of an initial handshake and then used in a subsequent handshake to perform resumption using the PSK. TLS 1.3 states that the client SHOULD include a "key_share" extension to enable the server to decline resumption and fall back to a full handshake, however it is not an absolute requirement.</t>
 
-<t>Example scenarios that are impacted by this are middleboxes that were not part of the initial handshake, and hence do not know the PSK. If the client does not include the "key_share" extension the middlebox cannot force a fallback to the full handshake. If the middlebox is required to inspect the session, it will have to fail the connection instead.</t>
+<t>Example scenarios that are impacted by this are middleboxes that were not part of the initial handshake, and hence do not know the PSK. If the client does not include the "key_share" extension, the middlebox cannot force a fallback to the full handshake. If the middlebox policy requires it to inspect the session, it will have to fail the connection instead.</t>
 
 </section>
-<section anchor="version-downgrade-protection" title="Version Downgrade Protection">
+<section anchor="DisengageMiddlebox" title="Ability to Disengage Middlebox Proxy">
+<t>Network security middleboxes intercept or proxy TLS sessions for acceptable use policy, protocol inspection, malware scanning and other purposes.  For compliance and privacy reasons, middleboxes must be able to engage and disengage the proxy function seamlessly without affecting user experience. For example, privacy laws may prohibit middleboxes from intercepting banking traffic even if it is within the enterprise network and outbound network traffic is subject to inspection legally.</t>
+
+<t>There are several techniques that can be utilized.  Those techniques function with TLS 1.2 and earlier versions but not with TLS 1.3.</t>
+
+<t>One technique is for the middlebox to negotiate the same master secret with the original TLS client and server, as if the two endpoints handshake directly. This is also known as "Triple Handshake" used by legitimate middleboxes. <xref target="BreakTLS"/> describes the methods with RSA and DH key exchanges.  When the proxy session keys are the same as for a direct handshake, the middlebox is able to "cut-through" the two TLS proxy sessions when it finishes the security inspection.</t>
+
+<t>This technique is not functional with TLS 1.3 since the transcript hash over the handshake messages is part of the key derivation procedure.</t>
+
+</section>
+<section anchor="version-negotiation-and-downgrade-protection" title="Version Negotiation and Downgrade Protection">
 <t>In TLS, the ClientHello message includes a list of supported protocol versions. The server will select the highest supported version and indicate its choice in the ServerHello message.</t>
+
+<t>TLS 1.3 changes the way in which version negotation is performed. The ClientHello message will indicate TLS version 1.3 in the new "supported_versions" extension, however for backwards compatility with TLS 1.2, the ClientHellow message will indicate TLS version 1.2 in the "legacy_version" field. A TLS 1.3 server will recognize that TLS 1.3 is being negotiated, whereas a TLS 1.2 server will simply see a TLS 1.2 ClientHello and proceed with TLS 1.2 negotiation.</t>
 
 <t>In TLS 1.3, the random value in the ServerHello message includes a special value in the last eight bytes when the server negotiates either TLS 1.2 or TLS 1.1 and below. The special value(s) enable a TLS 1.3 client to detect an active attacker launching a downgrade attack when the client did indeed reach a TLS 1.3 server, provided ephemeral ciphers are being used.</t>
 
-<t>From a network security point of view, the primary impact of this change is that it requires the middlebox to be an active man-in-the-middle. This is not different from current behavior of middleboxes, as long as the middlebox effectively proxies between a client-to-middlebox and a middlebox-to-server TLS connection.</t>
+<t>From a network security point of view, the primary impact is that TLS 1.3 requires the TLS proxy to be an active man-in-the-middle from the start of the handshake (as explained in <xref target="DisengageMiddlebox"/>). However, a middlebox that supports only TLS 1.2 may let the initial TLS 1.3 ClientHello proceed resulting in a TLS 1.3 ServerHello from the server, which the middlebox does not support. Depending on the policy configured, the TLS proxy may reject the session at that point.</t>
 
+<t>If the TLS 1.2 middlebox takes on an active role in the handshake from the start, then the middlebox effectively proxies between a client-to-middlebox and a middlebox-to-server TLS connection, in which case the handshake succeeds (but as TLS 1.2). Note that due to downgrade protection, the proxy cannot simply downgrade the TLS version to 1.2 in the ClientHellow, which would enable it to disengage from the handshake later.</t>
 
-</section>
-<section anchor="rtt-handshake" title="1-RTT Handshake">
-
-</section>
-<section anchor="rtt-data" title="0-RTT Data">
 
 </section>
 <section anchor="sni-encryption-in-tls-through-tunneling" title="SNI Encryption in TLS Through Tunneling">
@@ -177,14 +185,33 @@
 </section>
 </section>
 <section anchor="inbound-session-use-cases" title="Inbound Session Use Cases">
+<t>In this section we explain how a set of inbound real-life inbound use case scenarios are affected by some of the TLS 1.3 changes.</t>
 
 <section anchor="use-case-i1-data-center-protection" title="Use Case I1 - Data Center Protection">
+<t>Services deployed in data center may be offered for access by external and untrusted hosts. Network security functions such as IPS and Web Application Firewall (WAF) are deployed to monitor and control the transactions to the services. Application level load balancer is not a security function strictly speaking but is also an important function in front of the services.</t>
+
+<t>Network security function are usually deployed in two modes, monitoring and inline.  In either case, they need to access the L7 and application data such as HTTP transactions which could be protected by TLS encryption. They may monitor the TLS handshakes for additional visibility and control.</t>
+
+<t>The TLS handshake monitoring function will be impacted by TLS 1.3.</t>
+
+<t>For additional considerations on this scenario, see also <xref target="I-D.green-tls-static-dh-in-tls13"/>.</t>
 
 </section>
 <section anchor="use-case-i2-application-operation-over-nat" title="Use Case I2 - Application Operation over NAT">
+<t>The Network Address Translation (NAT) function translates L3 and L4 addresses and ports as the packet traverses the network device.  Sophisticated NAT devices may also implement application inspection engines to correct L3/L4 data embedded in the control messages (e.g., FTP control message, SIP signaling messages) so that they are consistent with the outer L3/L4 headers.</t>
+
+<t>Without the correction, the secondary data (FTP) or media (SIP) connections will likely reach a wrong destination.</t>
+
+<t>The embedded address and port correction operation requires access to the L7 payload which could be protected by encryption.</t>
+
+<t>TLS 1.3 will not prevent the middlebox from performing this function, however, once starting the proxy function, the middlebox is not able to remove itself from the packet path for the particular session.</t>
 
 </section>
-<section anchor="use-case-i3-compliance" title="Use Case I3 - Compliance">
+<section anchor="InboundCompliance" title="Use Case I3 - Compliance">
+<t>Many regulations exist today that include cyber security requirements that require close inspection of the information traversing through the network.  For example, organizations that require PCI-DSS <xref target="PCI-DSS"/>
+compliance must provide the ability to regularly monitor the network to prevent, detect and minimize impact of a data compromise.  <xref target="PCI-DSS"/> Requirement #2 (and Appendix A2 as it concerns TLS) describes the need to be able to detect protocol and protocol usage correctness. Further, <xref target="PCI-DSS"/> Requirement #10 detailing monitoring capabilities also describe the need to provide network-based audit to ensure that the protocols and configurations are properly used.</t>
+
+<t>Deployments today still use factory or default credentials and settings that must be observed, and to meet regulatory compliance, must be audited, logged and reported.  As the server (certificate) credential is now encrypted in TLS 1.3, the ability to verify the appropriate (or compliant) use of these credentials are lost, unless the middlebox always becomes an active MITM.</t>
 
 </section>
 <section anchor="InboundCryptoSecurityAudit" title="Use Case I4 - Crypto Security Audit">
@@ -195,29 +222,36 @@
 </section>
 </section>
 <section anchor="outbound-session-use-cases" title="Outbound Session Use Cases">
+<t>In this section we explain how a set of real-life outbound session use case scenarios are affected by some of the TLS 1.3 changes.</t>
 
 <section anchor="use-case-o1-acceptable-use-policy-aup" title="Use Case O1 - Acceptable Use Policy (AUP)">
-<t>Enterprises deploy security devices to enforce Acceptable Use Policy (AUP) accroding to the IT and workplace policies.  The security devices, such as firewall/next-gen firewall and web proxy, act as middle boxes to scan traffic in the enterprise network for policy enforcement.</t>
+<t>Enterprises deploy security devices to enforce Acceptable Use Policy (AUP) according to the IT and workplace policies. The security devices, such as firewall/next-gen firewall, web proxy and an application on the endpoints, act as middleboxes to scan traffic in the enterprise network for policy enforcement.</t>
 
 <t>Sample AUP policies are:</t>
 
-<t>"Employess are not allowed to access 'gaming' websites from enterprise network"</t>
+<t><list style="symbols">
+  <t>"Employees are not allowed to access 'gaming' websites from enterprise network"</t>
+  <t>"Temporary workers are not allowed to use enterprise network to upload video clips to Internet, but are allowed to watch video clips"</t>
+</list></t>
 
-<t>"Temporary workers are not allowed to use enterprise network to upload video clips to Internet, but are allowed to watch video clips"</t>
+<t>Such enforcements are accomplished by controlling the DNS transactions and HTTP transactions.  A coarse control is achieved by controlling the DNS response (which itself may be protected by TLS), however, in many cases, granular control is required at HTTP URL or Method levels, to distinguish a specific web page on a hosting site, or to differentiate between uploading and downloading operations.</t>
 
-<t>Such enforcements are accomplished by controlling the DNS transactions and HTTP transactions.  A coase control is achieved by controlling the DNS response, however, in many cases, granular control is required at HTTP URL or Method levels, to distinguish a specific web page on a hosting site, or to differentiate between uploading and downloading operations.</t>
+<t>The security device requires access to plain text HTTP header for granular AUP control. For traffic passing the AUP check, the middlebox is also required to cut through the rest of the traffic without decryption, for performance and privacy reasons.</t>
 
-<t>The security device requires to access plain text HTTP header for granular AUP control.</t>
+<t>The cut-through action is possible with up to TLS 1.2 but will not work with TLS 1.3.</t>
+
 
 
 </section>
 <section anchor="use-case-o2-malware-and-threat-protection" title="Use Case O2 - Malware and Threat Protection">
+<t>Enterprises adopt a multi-technology approach when it comes to malware and threat protection for the network assets. This includes solutions deployed on the endpoint, network and cloud.</t>
 
-<t>Enterprises adopt a multi-technology approach when it comes to malware and threat protection for the network assets.  This include solutions deployed on the endpoint, network and cloud.</t>
+<t>While an endpoint application based solution may be effective in protecting from malware and virus attacks, enterprises prefer to deploy multiple technologies for a multi-layer protection. Network based solutions provide such additional protection with the benefit of rapid and centralized updates.</t>
 
-<t>While endpoint application based solution is effective in protecting from malware and virus attecks, enterprises prefer to deploy multiple technologies for a multi-layer protection.  Network based solutions provide such additional protection with benefits including lower manangement costs.</t>
+<t>The network based solutions comprise security devices and applications that scan network traffic for the purpose from malware signatures to 0-day analysis.</t>
 
-<t>The network based solutions comprise security devices and applications that scan network traffic for the purpose from malware signatures to 0-day analysis.  The security functions require access to clear text HTTP or other application level streams.</t>
+<t>The security functions require access to clear text HTTP or other application level streams on a needed basis. After a successful scan the traffic should be allowed to flow through without being decrypted continuously. This is not possible with TLS 1.3.</t>
+
 
 
 </section>
@@ -230,11 +264,15 @@
   <t>Lack of software updates as new vulnerabilities are discovered.</t>
 </list></t>
 
+<t>In short, the security posture of such devices is expected to be weak, especially as they get older, and the only way to improve this posture is to supplement them with a network-based solution. This in turn requires a MITM, and with TLS 1.3, this implies the MITM must be present at all times since the TLS 1.3 proxy must engage during the ClientHello and cannot disengage subsequently.</t>
+
 </section>
 <section anchor="use-case-o4-unpatched-endpoints" title="Use Case O4 - Unpatched Endpoints">
-<t>New vulnerabilities appear constantly and in spite of many advances in recent years in terms of automated software updates, especially in reaction to security vulnerabilities, the fact of the matter is that a very large number of endpoints continue to run versions of software with known vulnerabilities.</t>
+<t>New vulnerabilities appear constantly and in spite of many advances in recent years in terms of automated software updates, especially in reaction to security vulnerabilities, the reality is that a very large number of endpoints continue to run versions of software with known vulnerabilities.</t>
 
 <t>In theory, these endpoints should of course be patched, but in practice, it is often not done which leaves the endpoint open to the vulnerability in question. A network-based security solution can look for attempted exploits of such vulnerabilities and stop them before they reach the unpatched endpoint.</t>
+
+<t>With TLS 1.3, the network-based security solution must act as a MITM at all times, since it must engage during the ClientHello and cannot disengage subsequently.</t>
 
 </section>
 <section anchor="use-case-o5-rapid-containment-of-new-vulnerability-and-campaigns" title="Use Case O5 - Rapid Containment of New Vulnerability and Campaigns">
@@ -242,18 +280,23 @@
 
 <t>A network-based security solution can look for attempted exploits of such new vulnerabilities or recognize an attack being launched based on security intelligence related to the campaign and stop them before they reach the vulnerable endpoint.</t>
 
+<t>With TLS 1.3, the network-based security solution must act as a MITM at all times, since it must engage during the ClientHello and cannot disengage subsequently.</t>
+
 </section>
 <section anchor="use-case-o6-end-of-life-endpoint" title="Use Case O6 - End-of-Life Endpoint">
 <t>Older endpoints (and in some cases even new ones) will not receive any software updates. As new vulnerabilities inevitably are discovered, these endpoints will be vulnerable to exploits.</t>
 
-<t>A network-based security solution can help prevent such exploits.</t>
+<t>A network-based security solution can help prevent such exploits. With TLS 1.3, the network-based security solution must act as a MITM at all times, since it must engage during the ClientHello and cannot disengage subsequently.</t>
 
 </section>
 <section anchor="use-case-o7-compliance" title="Use Case O7 - Compliance">
+<t>This use case is similar to the inbound compliance use case described in <xref target="InboundCompliance"/>, except its from the client point of view.</t>
+
+<t>Again, the only way to satisfy the use case scenario around network-based audit is for the middlebox to always become an active MITM.</t>
 
 </section>
 <section anchor="use-case-o8-crypto-security-audit" title="Use Case O8 - Crypto Security Audit">
-<t>This is a variation of the use in <xref target="InboundCryptoSecurityAudit"/></t>
+<t>This is a variation of the use in <xref target="InboundCryptoSecurityAudit"/>.</t>
 
 <t>Organizations may have policies around acceptable ciphers and certificates for client sessions, possibly based on the destination. Examples include no use of self-signed certificates, black or white-list Certificate Authority, etc. In TLS 1.2, the Certificate message was sent in clear-text, however in TLS 1.3 the message is encrypted thereby preventing either a network-based audit or policy enforcement around acceptable server certificates.</t>
 
@@ -262,22 +305,18 @@
 </section>
 </section>
 <section anchor="iana-considerations" title="IANA considerations">
-
 <t>This document does not include IANA considerations.</t>
 
 </section>
 <section anchor="security-considerations" title="Security Considerations">
-
-<t>TBD</t>
+<t>This document describes existing functionality and use case scenarios and as such does introduce any new security considerations.</t>
 
 </section>
 <section anchor="acknowledgements" title="Acknowledgements">
-
 <t>David McGrew provided the Security Audit use cases.</t>
 
 </section>
 <section anchor="change-log" title="Change Log">
-
 <t>First version -00</t>
 
 </section>
@@ -359,6 +398,15 @@
   </front>
   <seriesInfo name="IEEE Symposium on Security and Privacy" value=""/>
 </reference>
+<reference anchor="PCI-DSS" target="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-2.pdf">
+  <front>
+    <title>Payment Card Industry (PCI): Data Security Standard</title>
+    <author >
+      <organization></organization>
+    </author>
+    <date year="2016" month="April"/>
+  </front>
+</reference>
 
 
     </references>
@@ -368,156 +416,207 @@
   </back>
 
 <!-- ##markdown-source:
-H4sIAGXx8FkAA+1cW3PcyHV+x6/ooh5EqmZGpHbXspmHhKIoL22JYkTKW07K
-leoBembaxKDHaICjsUr/Pd85pxtoYChKjl2pJJUtb3mIS/fpc/nOFTudTrOs
-sU1pTtXt2xt1MvtBXa43Om+Uq9SVabauvpu+0t4U6sbkbW2bXVa4vNJrvFHU
-etFMc73e2mppmmlT+mnrDa5447NCN3jmxfHJy+nJ8fTFT1lmN/WpaurWNy+O
-j39z/CLTtdGnyseFt0umIrvbnqrLqjF1hUVf0yZZrptTZauFy7LcFdjuVLV+
-qn1ubZZlG3uaKfxTL3JT+GZHx9mBBLoGatd6s+FX4jXf1DZv+r8blyc3Xd3U
-ZuGTK7v18ELu1mtTNeFKpttm5erTbAoKce1qps71evoLMwXPC7OudJXvhjdc
-DZrOrc+dutn5xqxpdbPWtjxVVWDrv+R0f4YdM6bbGND9w08/HYcXf9G7jAgq
-sMXT3/x08sOPT+lvsPNU3ehK/c55gwu1WVpXYbczfrqtmhoPfLw5i0RfzLBU
-tezIvQCH4pXH6DR/3ur/PirfzNRZVUBrvKk6Ut+UZr0Gqwa3HqN5oeXBB6k+
-OTlRvzhXqLN7U7VG3ThItyf++Ne//uG4J/7Sm9JWCelXvxuTnlWuXuvG3htS
-0g9vzl+cnPzmVMnvn178+Cv+fTl9PbOmWbAR4d+TH06h2KTxycv00BJkVvyU
-b3Ajnxarqa3iK6OFfGWnpsrr3aYh6sKexy9f0s+fb2+vbyzZWW42jVgQW4Ou
-l8SJVdNs/Onz539e6bIw9ZoY9XzTzp9v9MbU/nn3KpaeVoX3Jy9nm2LRrxNw
-ZWU67OjAZSG7i5mHNboXoz3Fv4Pw/22mXrd1uzZQzQfuvdPji69n6mZTQzN0
-WY7vfZipVxoA48c3YL03bVnae12Nb8FGXrW1/2tj7N69d0SALc1ufON3M/Wz
-8G9/wT/M1LX+5JOjC2i+MfO61fWO0RP3XkFb74CMp2PeHtzWdlMa7AD+r/Sd
-8Qq/1Llzd9ao87YBd7EPv08WQjff2E9sLGAyMMwCWcF75e5NTeB78C0p/B5M
-WEFD9AMMOoOEYA/LSjfTt3igLcZPnM/UG9cSsD/w7rWtHSga37mGROA15iMm
-gTc/dpc8lMJ4Mhcw5fLi4gJWv944b9s1ebJO/4gB1zWEm+8OMvpnOp0qPYfx
-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
-unrPvz9c/OvHyw8Xr+n3zc9nb992P+SJDH+8//g23Kdf/Zvn79+9u7h6LS/j
-qhpdenf2xwOG+Ozg/fXt5furs7cHVCEbCousI4bbUGpYXCMYXBif13ZuKK6j
-InVGVfKJenV+rU5+FFdOV2DYVGOJinvOjjlWld8DsAgZs+zz6Wno0XzJnv37
-RUEp/FOvrhwVDq87kycbgQnCUBnsIqoOzKKzI69WbouXgvaH9BdxOLSgLZvZ
-n55h2+fdttlt+Y+sJUYfKX6k9994f0KEcQkRixSOvRwwIKknfn81cQRzfZnO
-x0rJ1nSy+nqV7qsVOvVItRIL2/uYlMblOCylRHtZu3bjybYIzaOzoqXtMLT3
-wXWPHxvnrJ5dxJMnowx6qFOennjywazdPeQGbt5w00V9uDnjbV6T+M30Z1OW
-8GnqnKs06qa1yLSzKFvfbsgDg4mPviwlHjxNL09GKVCfLTz1g1RNrAmpZZev
-yGNTTn7FS07ZTfaRL0VPNZ2JRCHExRIIwWVKB+nUQt87jiQMbqxZg5GAmjH9
-qQpHt0rVOErSsDqVFkjwtYEaH16/uTnikI4cr4f9RAfN4R17BsA6BFH3qEgk
-6ph6EK6uJIFg1IshdV+NI1O1rraRlQRGbV1x7NqF1cNXcl0RxHNuRL7IR1Qf
-FFOo+kb+6SKU+R6IAFK3L6FclZdt0Sf+aV0R+NCSkFdIs/lCX38MdT3JYzvv
-YRptqVDMJRUIaglLYY8azelookAYuXCuItAhJNt5rHvI2Er6Pi5i7ZkE2cRF
-V9u7EYGc90lsBtQIyi9Z7DkHwaQoTgE1vV5yyYaircjgTrmbrkoYK3qHl9dS
-wMfFI3HLDy1IWUVkc8NNR6briuLLS6TJodN1eHN1ecTqwy5c6iQ4V9ul9Wmy
-u7V+JUiNMKXBY7S/hOYILRZtKVkL/HvDnbiDe1snS/kDVgeAUSNZv1ZL4GL1
-7VMi+OEYO1iSV10vWCqyrehu4dbaDtJzShqaxqwlh+KcBFHiLITD4YQIdtkG
-QlAkrBqwM1oNH9tWEYFKLpGl6eJG15rLhzBdqY2K2utUI76xahD9uFwopQXk
-oyFYazj1fUS5JoOTcCt0nwYvdQfObIhfVVL+HvjSAJdhl/2FhiVuLmng3Ctb
-xJAyMDsSL7kPpT4c/KxNYXWNI111aRTlr+qZXTwTBb66VFLLlpreYSSVKD2K
-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
-Xv4rD9T5zP4T54fR8jVLAAA=
+H4sIACer81kAA+1cW3PbyJV+569AyQ8WXaRs2TNxon1ZjWzvKLFlrSXHld1K
+pZpgk8QYBBg0IJpx+b/vdy59AUjLTmVqa6dqUzu1MgE0Tp/rdy6N6XQ6GrVF
+W9qz7Pb1TXZ68iy7XG9M3mZ1lV3Zdls3H6c/GWfn2Y3Nu6Zod6N5nVdmjSfm
+jVm009yst0W1tO20Ld20cxa/OOtGc9PinqdPTp9PT59Mnz4fjYpNc5a1Tefa
+p0+e/OHJ05FprDnLnF94u2QqRh+3Z9ll1dqmwqIv6CWj3LRnWVEt6tEor+d4
+3VnWualxeVGMRqNNcTbK8L9mkdu5a3e0nR1IoN9A7dpsNvyI/821TZG38d9t
+nScX66Zt7MIlv+zW/R/yer22Vau/jEzXrurmbDQFhfjt6iS7MOvpB2YK7hdm
+XZkq3/Uv1A1ouihcXmc3O9faNa1u16Yoz7JK2frvOV0/wRtHTLe1oPvZjz8+
+0Qc/mN2ICJrjFQ//8OPpsx8e0r/BzrPsxlTZH2tn8UNjl0Vd4W3nfHdXtQ1u
+eH9z7ol+eYKlqmUg9yU45H+5j077y9b871H56iQ7r+bQGmerQOqr0q7XYFXv
+0n00L4zceJDq09PT7ENdz7PzO1t1NrupId1I/JPf//7Zk0j8pbNlUSWkX/1x
+SPqoqpu1aYs7S0r67tXF09PTP5xl8vePT3/4Hf99OX1xUth2wUaE/06fnUGx
+SeOTh+mmJcis+C7X4kI+na+mReUfGSzkqmJqq7zZbVqiTt/55Plz+vPn29vr
+m4LsLLebViyIrcE0S+LEqm037uzx419WppzbZk2MerzpZo83ZmMb9zg8iqWn
+1dy50+cnm/kirqN+ZWWD7wjOZSFvFzPXNcKD3p78v1X4/3WSveiabm2hmgeu
+vTHDH1+cZDebBpphynJ47d1J9pOBg3HDC7Dem64siztTDS/BRn7qGveP1hZ7
+194QAUVpd8MLfzzJfhb+7S/455Ps2nxyydbFab6ys6YzzY69J679BG39CM94
+NuTt0W1TbEqLN4D/K/PRugx/ZRd1/bGw2UXXgrt4Dz9PFkIXXxWf2FjAZPiw
+Ap4VvM/qO9uQ8z36lhT+BCasoCHmAIPOISHYw7Iy7fQ1bujmwzsuTrJXdUeO
+/cCz10VTg6LhlWtIBFFjNmASePND+MlBKawjcwFTLl++fAmrX29qV3RrimRB
+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
+HTzS0OyY/6o3CoTuzx7H2RT0zevqYZtMeoR5KBqKYL+sUxB0RYl/wsTTWYoD
+bLt3xdC0HjBOlqcjI+1DrrzpvG0KPveqGNhxv+WZSSvhAVUQX4ZzU76qeisw
+NLvtoO0lFhidO23qcwVnkjay0rJwUnCdfLvIv6+paelWqp5cfkoq63dIvUV9
+k2KrJFiKP2JIom4Fn0mxSe6hg6LDeisCFu4i30VdYtH6wbhZ/4wZsggaL6IE
+mctovjHKVeH9jcn8TJqQ/PbrtL+NMi1XrA4s5OGvLzSo8IYpGqkELSG1H47H
+UR39wQsPo3jas6df3vHM7IKmRgqdZarZt0pDbzgrnr0Hdy74aPGgo58O7ciA
+g04++RZ7nBTzvxwYfWIPw3FR9CsdPhikLSfcgQ8EZZencDx8MuyCyyFptnaj
+ihDHGAtpxcJB8L162IlncnDVV6qcIyIoL2nIE5OBdnwmhMijzhyo2CuJxbMv
+Xukvr2/42Q92lp1vNqV3Nf4gT3b84fzVmDcfCITUtM/r5x5bII2YAps8nRYK
+qn7Se4HMpNA5EthXSfWxJlRj9wnWI9klO3g5q0gx0Fc4TJXM/YVnqMdPJwbD
+7J0nZLRfLAwP0U65EJ9OlpJn2tY8HkAlu3iCR9JcqkEjfb0MR4ZIddgiKIjr
+ZLv23UHH6+cClxJusMC9TGjQr89J317UQTEFPHHkLvpXzmMETXoZeQUNcVnL
+LHPEVQnjyXR0IlCptA3aFsnekwoaldvtoUHAE2nxJ+/yo3BGdlZ7Uw2DfZxy
+klC/s7ffM7SnMLRUy95u9E1SjLk6v+U9efGfa5eaz/SUGmRx0zhurtVL4Npr
+mWt8/YPvbuskkGQiOsS5oRyQDyARwLS9yU49/ABVuak32HWrfUm8MZwhI8nx
+9uNxt1RRkoIogoQMydcyI4/M4fWzx6BOzlWtZ5YDiu+jq5WGChRHpEn2Cro2
+uDbJbi6v+QyWKfmYmj4yhs8LHZwdWwpLEy6nSuuYHbktIWVlAbkbsrgPSbxQ
+cgNghxXWdMh1J6Qfg6YxxWDuJQP1XOKfMYVwonBl8ZHSE580b/mAGeyz1VFt
+Vd/ABz+R4CWWUJHVQU1C1tufk4HJbsyOvdV9tpjYYaxlMbUcTnWevh8pGeJo
+pJXWWRGr0yHeTmApuaZsyThn0gU4UCRlZ6qFUhmM8rPtIWtRdd0YCM/Xr6kw
+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
+mWKHyKsaJ1+Bp4n+0f8ADjsce/tnAAA=
 
 -->
 
