@@ -685,8 +685,6 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    October 2017
 
 7.  Acknowledgements
 
-   David McGrew provided the Security Audit use cases.
-
 8.  Change Log
 
    First version -00
@@ -719,6 +717,8 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    October 2017
               A., and P. Strub, "Triple Handshakes and Cookie Cutters:
               Breaking and Fixing Authentication over TLS", IEEE
               Symposium on Security and Privacy , 2014.
+
+
 
 
 

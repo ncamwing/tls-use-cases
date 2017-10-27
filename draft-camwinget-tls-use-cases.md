@@ -338,7 +338,7 @@ This document does not include IANA considerations.
 This document describes existing functionality and use case scenarios and as such does introduce any new security considerations. 
 
 #  Acknowledgements
-David McGrew provided the Security Audit use cases.
+
 
 #  Change Log
 First version -00
