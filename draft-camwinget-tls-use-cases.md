@@ -23,6 +23,15 @@ pi:
     comments: yes
 
 author:
+- ins: F. Andreasen
+  name: Flemming Andreasen
+  org: Cisco Systems
+  email: fandreas@cisco.com
+  street: 111 Wood Avenue South
+  code: '08830'
+  city: Iselin
+  region: NJ
+  country: USA
 - ins: N. Cam-Winget
   name: Nancy Cam-Winget
   org: Cisco Systems
@@ -40,15 +49,6 @@ author:
   code: '95134'
   city: San Jose
   region: CA
-  country: USA
-- ins: F. Andreasen
-  name: Flemming Andreasen
-  org: Cisco Systems
-  email: fandreas@cisco.com
-  street: 111 Wood Avenue South
-  code: '08830'
-  city: Iselin
-  region: NJ
   country: USA
 
 normative:
@@ -95,18 +95,18 @@ informative:
 
 --- abstract
 
-TLS 1.3 introduces several changes to TLS 1.2 in order to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions. 
+TLS 1.3 introduces several changes to TLS 1.2 with a goal to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions. 
 
 --- middle
 
 # Introduction
 
-Network-based security solutions such as Firewalls (FW) and Intrusion Prevention Systems (IPS) rely on network traffic inspection to implement perimeter-based security policies. Depending on the security functions required, these middleboxes can either be deployed as traffic monitoring devices or active in-line devices. A traffic monitoring middlebox may for example perform vulnerability detection, intrusion detection, crypto audit, compliance monitoring, etc. An active in-line middlebox may for example prevent malware download, block known malicous URLs, enforce use of strong ciphers, stop data exfiltration, etc. A significant portion of such security policies require clear-text traffic inspection above Layer 4, which becomes problematic when traffic is encrypted with Transport Layer Security (TLS) {{RFC5246}}. Today, network-based security solutions typically address this problem by becoming a man-in-the-middle (MITM) for the TLS session according to one of the following two scenarios:
+Network-based security solutions such as Firewalls (FW) and Intrusion Prevention Systems (IPS) rely on network traffic inspection to implement perimeter-based security policies. Depending on the security functions required, these middleboxes can either be deployed as traffic monitoring devices or active in-line devices. A traffic monitoring middlebox may for example perform vulnerability detection, intrusion detection, crypto audit, compliance monitoring, etc. An active in-line middlebox may for example prevent malware download, block known malicious URLs, enforce use of strong ciphers, stop data exfiltration, etc. A significant portion of such security policies require clear-text traffic inspection above Layer 4, which becomes problematic when traffic is encrypted with Transport Layer Security (TLS) {{RFC5246}}. Today, network-based security solutions typically address this problem by becoming a man-in-the-middle (MITM) for the TLS session according to one of the following two scenarios:
 
 1. Outbound Session, where the TLS session originates from a client inside the perimeter towards an entity on the outside
 2. Inbound Session, where the TLS session originates from a client outside the perimeter towards an entity on the inside
 
-For the outbound session scenario, MITM is enabled by generating a local root certificate and an accompanying (local) public/private key pair. The local root certificate is installed on the inside entities for which TLS traffic is to be inspected, and the network security device(s) store a copy of the private key. During the TLS handshake, the network security device (hereafter referred to as a TLS proxy) modifies the certificate provided by the (outside) server and (re)signs it with the private key from the local root certificate. From here on, the TLS proxy has visibility into further exchanges between the client and server which enables it to to decrypt and inspect subsequent network traffic. 
+For the outbound session scenario, MITM is enabled by generating a local root certificate and an accompanying (local) public/private key pair. The local root certificate is installed on the inside entities for which TLS traffic is to be inspected, and the network security device(s) store a copy of the private key. During the TLS handshake, the network security device (hereafter referred to as a TLS proxy) modifies the certificate provided by the (outside) server and (re)signs it with the private key from the local root certificate. From here on, the TLS proxy has visibility into further exchanges between the client and server which enables it to decrypt and inspect subsequent network traffic. 
 
 For the inbound session scenario, the TLS proxy is configured with a copy of the local servers' certificate(s) and corresponding private key(s). Based on the server certificate presented, the TLS proxy determines the corresponding private key, which again enables the TLS proxy to gain visibility into further exchanges between the client and server and hence decrypt subsequent network traffic. 
 
@@ -116,7 +116,7 @@ It has been noted, that currently deployed TLS proxies (middleboxes) may reduce 
 
 The purpose of this document is to provide a representative set of *network based security* use case scenarios that are negatively impacted by TLS 1.3 and do not lend themselves to an endpoint-based alternative solution. For each use case scenario, we highlight the specific aspect(s) of TLS 1.3 that makes the use case problematic with a TLS proxy based solution and we explain why an endpoint-based only solution is not considered acceptable. 
 
-It should be noted that this document is looking only at *security* use cases with a focus on identifying the problematic ones. The document does not offer specific solutions to these; the goal is to stimulate further discussion and explore possible solutions subsequently.
+It should be noted that this document addresses only *security* use cases with a focus on identifying the problematic ones. The document does not offer specific solutions to these as the goal is to stimulate further discussion and explore possible solutions subsequently.
 
 
 ## Requirements notation
@@ -132,7 +132,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 *[Editor's Note: Provide a high level overview of TLS 1.3 that highlights how a proxy becomes difficult.]*
 {:/comment}
 
-TlS 1.3 introduces several changes to TLS 1.2 in order to improve the overall privacy and security of TLS, however in doing so, some of the changes have a negative impact on network based security. In this section, we describe those TLS 1.3 changes and briefly outline some scenario impacts. We divide the changes into two groups; those that impact inbound sessions and those that impact outbound sessions.  
+To improve its overall security and privacy, TLS 1.3 introduces several changes to TLS 1.2; in doing so, some of the changes present a negative impact on network based security. In this section, we describe those TLS 1.3 changes and briefly outline some scenario impacts. We divide the changes into two groups; those that impact inbound sessions and those that impact outbound sessions.  
 
 ##Inbound Session Change Impacts
 
@@ -155,7 +155,7 @@ The server replies with a ServerHello message, which contains the selected conne
 
 In TLS 1.2, the ClientHello, ServerHello and Certificate messages are all sent in clear-text, however in TLS 1.3, the Certificate message is encrypted thereby hiding the server identity from any intermediary. Note that even *if* the SNI is provided (in cleartext) by the client, there is no guarantee that the actual server responding is the one indicated in the SNI from the client. 
 
-Example scenarios that are impacted by this involve selective network security, such as whitelists or blacklists based on security intelligence, regulatory requirements, categories (e.g. finanicial services), etc. An added challenge is that some of these scenarios require the middlebox to perform inspection, whereas other scenarios require the middlebox to *not* perform inspection.
+Example scenarios that are impacted by this involve selective network security, such as whitelists or blacklists based on security intelligence, regulatory requirements, categories (e.g. financial services), etc. An added challenge is that some of these scenarios require the middlebox to perform inspection, whereas other scenarios require the middlebox to *not* perform inspection.
 
 
 ###Resumption and Pre-Shared Key 
@@ -178,7 +178,7 @@ This technique is not functional with TLS 1.3 since the transcript hash over the
 ###Version Negotiation and Downgrade Protection
 In TLS, the ClientHello message includes a list of supported protocol versions. The server will select the highest supported version and indicate its choice in the ServerHello message.  
 
-TLS 1.3 changes the way in which version negotation is performed. The ClientHello message will indicate TLS version 1.3 in the new "supported_versions" extension, however for backwards compatility with TLS 1.2, the ClientHellow message will indicate TLS version 1.2 in the "legacy_version" field. A TLS 1.3 server will recognize that TLS 1.3 is being negotiated, whereas a TLS 1.2 server will simply see a TLS 1.2 ClientHello and proceed with TLS 1.2 negotiation. 
+TLS 1.3 changes the way in which version negotiation is performed. The ClientHello message will indicate TLS version 1.3 in the new "supported_versions" extension, however for backwards compatibility with TLS 1.2, the ClientHellow message will indicate TLS version 1.2 in the "legacy_version" field. A TLS 1.3 server will recognize that TLS 1.3 is being negotiated, whereas a TLS 1.2 server will simply see a TLS 1.2 ClientHello and proceed with TLS 1.2 negotiation. 
 
 In TLS 1.3, the random value in the ServerHello message includes a special value in the last eight bytes when the server negotiates either TLS 1.2 or TLS 1.1 and below. The special value(s) enable a TLS 1.3 client to detect an active attacker launching a downgrade attack when the client did indeed reach a TLS 1.3 server, provided ephemeral ciphers are being used.
 
@@ -212,9 +212,9 @@ Example scenarios that are impacted by this involve selective network security, 
 In this section we explain how a set of inbound real-life inbound use case scenarios are affected by some of the TLS 1.3 changes. 
 
 ## Use Case I1 - Data Center Protection
-Services deployed in data center may be offered for access by external and untrusted hosts. Network security functions such as IPS and Web Application Firewall (WAF) are deployed to monitor and control the transactions to the services. Application level load balancer is not a security function strictly speaking but is also an important function in front of the services.
+Services deployed in the data center may be offered for access by external and untrusted hosts. Network security functions such as IPS and Web Application Firewall (WAF) are deployed to monitor and control the transactions to these services. while an Application level load balancer is not a security function strictly speaking, it is also an important function that resides in front of these services
 
-Network security function are usually deployed in two modes, monitoring and inline.  In either case, they need to access the L7 and application data such as HTTP transactions which could be protected by TLS encryption. They may monitor the TLS handshakes for additional visibility and control.
+These network security function are usually deployed in two modes: monitoring and inline.  In either case, they need to access the L7 and application data such as HTTP transactions which could be protected by TLS encryption. They may monitor the TLS handshakes for additional visibility and control.
 
 The TLS handshake monitoring function will be impacted by TLS 1.3.
 
@@ -227,11 +227,11 @@ Without the correction, the secondary data (FTP) or media (SIP) connections will
 
 The embedded address and port correction operation requires access to the L7 payload which could be protected by encryption.
 
-TLS 1.3 will not prevent the middlebox from performing this function, however, once starting the proxy function, the middlebox is not able to remove itself from the packet path for the particular session.
+While TLS 1.3 will not prevent the middlebox from performing this function, once a the proxy function is established, the middlebox is not able to remove itself from the packet path for the particular session.
 
 
 ## Use Case I3 - Compliance {#InboundCompliance}
-Many regulations exist today that include cyber security requirements that require close inspection of the information traversing through the network.  For example, organizations that require PCI-DSS {{PCI-DSS}}
+Many regulations exist today that include cyber security requirements requiring close inspection of the information traversing through the network.  For example, organizations that require PCI-DSS {{PCI-DSS}}
 compliance must provide the ability to regularly monitor the network to prevent, detect and minimize impact of a data compromise.  {{PCI-DSS}} Requirement #2 (and Appendix A2 as it concerns TLS) describes the need to be able to detect protocol and protocol usage correctness. Further, {{PCI-DSS}} Requirement #10 detailing monitoring capabilities also describe the need to provide network-based audit to ensure that the protocols and configurations are properly used.
 
 Deployments today still use factory or default credentials and settings that must be observed, and to meet regulatory compliance, must be audited, logged and reported.  As the server (certificate) credential is now encrypted in TLS 1.3, the ability to verify the appropriate (or compliant) use of these credentials are lost, unless the middlebox always becomes an active MITM. 
