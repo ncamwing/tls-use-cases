@@ -212,9 +212,9 @@ Example scenarios that are impacted by this involve selective network security, 
 In this section we explain how a set of inbound real-life inbound use case scenarios are affected by some of the TLS 1.3 changes. 
 
 ## Use Case I1 - Data Center Protection
-Services deployed in the data center may be offered for access by external and untrusted hosts. Network security functions such as IPS and Web Application Firewall (WAF) are deployed to monitor and control the transactions to these services. while an Application level load balancer is not a security function strictly speaking, it is also an important function that resides in front of these services
+Services deployed in the data center may be offered for access by external and untrusted hosts. Network security functions such as IPS and Web Application Firewall (WAF) are deployed to monitor and control the transactions to these services. While an Application level load balancer is not a security function strictly speaking, it is also an important function that resides in front of these services
 
-These network security function are usually deployed in two modes: monitoring and inline.  In either case, they need to access the L7 and application data such as HTTP transactions which could be protected by TLS encryption. They may monitor the TLS handshakes for additional visibility and control.
+These network security functions are usually deployed in two modes: monitoring and inline.  In either case, they need to access the L7 and application data such as HTTP transactions which could be protected by TLS encryption. They may monitor the TLS handshakes for additional visibility and control.
 
 The TLS handshake monitoring function will be impacted by TLS 1.3.
 
@@ -227,7 +227,7 @@ Without the correction, the secondary data (FTP) or media (SIP) connections will
 
 The embedded address and port correction operation requires access to the L7 payload which could be protected by encryption.
 
-While TLS 1.3 will not prevent the middlebox from performing this function, once a the proxy function is established, the middlebox is not able to remove itself from the packet path for the particular session.
+While TLS 1.3 will not prevent the middlebox from performing this function, once a proxy function is established, the middlebox is not able to remove itself from the packet path for the particular session.
 
 
 ## Use Case I3 - Compliance {#InboundCompliance}
