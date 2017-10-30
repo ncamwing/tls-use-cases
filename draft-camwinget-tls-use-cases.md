@@ -1,8 +1,8 @@
 ---
 
 title: TLS 1.3 Impact on Network-Based Security
-docname: draft-camwinget-tls-use-cases
-date: 2017-10-27
+docname: draft-camwinget-tls-use-cases-00
+date: @DATE@
 
 ipr: trust200902
 area: security
