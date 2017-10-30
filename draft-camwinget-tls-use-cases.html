@@ -401,12 +401,9 @@
 <link href="#rfc.section.4.8" rel="Chapter" title="4.8 Use Case O8 - Crypto Security Audit">
 <link href="#rfc.section.5" rel="Chapter" title="5 IANA considerations">
 <link href="#rfc.section.6" rel="Chapter" title="6 Security Considerations">
-<link href="#rfc.section.7" rel="Chapter" title="7 Acknowledgements">
-<link href="#rfc.section.8" rel="Chapter" title="8 Change Log">
-<link href="#rfc.section.9" rel="Chapter" title="9 Contributors">
-<link href="#rfc.references" rel="Chapter" title="10 References">
-<link href="#rfc.references.1" rel="Chapter" title="10.1 Normative References">
-<link href="#rfc.references.2" rel="Chapter" title="10.2 Informative References">
+<link href="#rfc.references" rel="Chapter" title="7 References">
+<link href="#rfc.references.1" rel="Chapter" title="7.1 Normative References">
+<link href="#rfc.references.2" rel="Chapter" title="7.2 Informative References">
 <link href="#rfc.authors" rel="Chapter">
 
 
@@ -416,8 +413,8 @@
   <meta name="dct.creator" content="Andreasen, F., Cam-Winget, N., and E. Wang" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-camwinget-tls-use-cases" />
   <meta name="dct.issued" scheme="ISO8601" content="2017-10-27" />
-  <meta name="dct.abstract" content="TLS 1.3 introduces several changes to TLS 1.2 with a goal to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions." />
-  <meta name="description" content="TLS 1.3 introduces several changes to TLS 1.2 with a goal to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions." />
+  <meta name="dct.abstract" content="Network-based security solutions are used by enterprises, public sector, and cloud service providers today in order to both complement and augment host-based security solutions. TLS 1.3 introduces several changes to TLS 1.2 with a goal to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions." />
+  <meta name="description" content="Network-based security solutions are used by enterprises, public sector, and cloud service providers today in order to both complement and augment host-based security solutions. TLS 1.3 introduces several changes to TLS 1.2 with a goal to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions." />
 
 </head>
 
@@ -455,7 +452,7 @@
   <span class="filename">draft-camwinget-tls-use-cases</span></p>
   
   <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
-<p>TLS 1.3 introduces several changes to TLS 1.2 with a goal to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions.</p>
+<p>Network-based security solutions are used by enterprises, public sector, and cloud service providers today in order to both complement and augment host-based security solutions. TLS 1.3 introduces several changes to TLS 1.2 with a goal to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions.</p>
 <h1 id="rfc.status"><a href="#rfc.status">Status of This Memo</a></h1>
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
@@ -524,17 +521,11 @@
 </li>
 <li>6.   <a href="#rfc.section.6">Security Considerations</a>
 </li>
-<li>7.   <a href="#rfc.section.7">Acknowledgements</a>
+<li>7.   <a href="#rfc.references">References</a>
 </li>
-<li>8.   <a href="#rfc.section.8">Change Log</a>
+<ul><li>7.1.   <a href="#rfc.references.1">Normative References</a>
 </li>
-<li>9.   <a href="#rfc.section.9">Contributors</a>
-</li>
-<li>10.   <a href="#rfc.references">References</a>
-</li>
-<ul><li>10.1.   <a href="#rfc.references.1">Normative References</a>
-</li>
-<li>10.2.   <a href="#rfc.references.2">Informative References</a>
+<li>7.2.   <a href="#rfc.references.2">Informative References</a>
 </li>
 </ul><li><a href="#rfc.authors">Authors' Addresses</a>
 </li>
@@ -545,19 +536,20 @@
   <h1 id="rfc.section.1">
 <a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a>
 </h1>
-<p id="rfc.section.1.p.1">Network-based security solutions such as Firewalls (FW) and Intrusion Prevention Systems (IPS) rely on network traffic inspection to implement perimeter-based security policies. Depending on the security functions required, these middleboxes can either be deployed as traffic monitoring devices or active in-line devices. A traffic monitoring middlebox may for example perform vulnerability detection, intrusion detection, crypto audit, compliance monitoring, etc. An active in-line middlebox may for example prevent malware download, block known malicious URLs, enforce use of strong ciphers, stop data exfiltration, etc. A significant portion of such security policies require clear-text traffic inspection above Layer 4, which becomes problematic when traffic is encrypted with Transport Layer Security (TLS) <a href="#RFC5246" class="xref">[RFC5246]</a>. Today, network-based security solutions typically address this problem by becoming a man-in-the-middle (MITM) for the TLS session according to one of the following two scenarios:</p>
+<p id="rfc.section.1.p.1">Enterprises, public sector, and cloud service providers need to defend their information systems from attacks originating from both inside and outside their networks. Protection and detection are typically done both on end hosts and in the network. Host agents have deep visibility on the devices where they are installed, whereas the network has broader visibility and provides homogenous security controls across heterogenous endpoints, covering devices for which no host monitoring is available (which is common today and is increasingly so in the Internet of Things). This helps protect against unauthorized devices installed by insiders, and provides a fallback in case the infection of a host disables its security agent. Because of these advantages, network-based security mechanisms are widely used. In fact, regulatory standards such as NERC CIP <a href="#NERCCIP" class="xref">[NERCCIP]</a> place strong requirements about network perimeter security and its ability to have visibility to provide security information to the security management and control systems. At the same time, the privacy of employees, customers, and other users must be respected by minimizing the collection of personal data and controlling access to what data is collected. These imperatives hold for both end host and network based security monitoring.</p>
+<p id="rfc.section.1.p.2">Network-based security solutions such as Firewalls (FW) and Intrusion Prevention Systems (IPS) rely on network traffic inspection to implement perimeter-based security policies. Depending on the security functions required, these middleboxes can either be deployed as traffic monitoring devices or active in-line devices. A traffic monitoring middlebox may for example perform vulnerability detection, intrusion detection, crypto audit, compliance monitoring, etc. An active in-line middlebox may for example prevent malware download, block known malicious URLs, enforce use of strong ciphers, stop data exfiltration, etc. A significant portion of such security policies require clear-text traffic inspection above Layer 4, which becomes problematic when traffic is encrypted with Transport Layer Security (TLS) <a href="#RFC5246" class="xref">[RFC5246]</a>. Today, network-based security solutions typically address this problem by becoming a man-in-the-middle (MITM) for the TLS session according to one of the following two scenarios:</p>
 <p></p>
 
 <ol>
 <li>Outbound Session, where the TLS session originates from a client inside the perimeter towards an entity on the outside</li>
 <li>Inbound Session, where the TLS session originates from a client outside the perimeter towards an entity on the inside</li>
 </ol>
-<p id="rfc.section.1.p.3">For the outbound session scenario, MITM is enabled by generating a local root certificate and an accompanying (local) public/private key pair. The local root certificate is installed on the inside entities for which TLS traffic is to be inspected, and the network security device(s) store a copy of the private key. During the TLS handshake, the network security device (hereafter referred to as a TLS proxy) modifies the certificate provided by the (outside) server and (re)signs it with the private key from the local root certificate. From here on, the TLS proxy has visibility into further exchanges between the client and server which enables it to decrypt and inspect subsequent network traffic.</p>
-<p id="rfc.section.1.p.4">For the inbound session scenario, the TLS proxy is configured with a copy of the local servers' certificate(s) and corresponding private key(s). Based on the server certificate presented, the TLS proxy determines the corresponding private key, which again enables the TLS proxy to gain visibility into further exchanges between the client and server and hence decrypt subsequent network traffic.</p>
-<p id="rfc.section.1.p.5">To date, there are a number of use case scenarios that rely on the above capabilities when used with TLS 1.2 <a href="#RFC5246" class="xref">[RFC5246]</a> or earlier. TLS 1.3 <a href="#I-D.ietf-tls-tls13" class="xref">[I-D.ietf-tls-tls13]</a> introduces several changes which prevent a number of these use case scenarios from being satisfied with the types of TLS proxy based capabilities that exist today.</p>
-<p id="rfc.section.1.p.6">It has been noted, that currently deployed TLS proxies (middleboxes) may reduce the security of the TLS connection itself due to a combination of poor implementation and configuration, and they may compromise privacy when decrypting a TLS session. As such, it has been argued that preventing TLS proxies from working should be viewed as a feature of TLS 1.3 and that the proper way of solving these issues is to rely on endpoint (client and server) based solutions instead. We believe this is an overly constrained view of the problem that ignores a number of important real-life use case scenarios that improve the overall security posture. We also note that current endpoint-based TLS proxies suffer from many of the same security issues as the network-based TLS proxies do <a href="#HTTPSintercept" class="xref">[HTTPSintercept]</a>.</p>
-<p id="rfc.section.1.p.7">The purpose of this document is to provide a representative set of <em>network based security</em> use case scenarios that are negatively impacted by TLS 1.3 and do not lend themselves to an endpoint-based alternative solution. For each use case scenario, we highlight the specific aspect(s) of TLS 1.3 that makes the use case problematic with a TLS proxy based solution and we explain why an endpoint-based only solution is not considered acceptable.</p>
-<p id="rfc.section.1.p.8">It should be noted that this document addresses only <em>security</em> use cases with a focus on identifying the problematic ones. The document does not offer specific solutions to these as the goal is to stimulate further discussion and explore possible solutions subsequently.</p>
+<p id="rfc.section.1.p.4">For the outbound session scenario, MITM is enabled by generating a local root certificate and an accompanying (local) public/private key pair. The local root certificate is installed on the inside entities for which TLS traffic is to be inspected, and the network security device(s) store a copy of the private key. During the TLS handshake, the network security device (hereafter referred to as a TLS proxy) modifies the certificate provided by the (outside) server and (re)signs it with the private key from the local root certificate. From here on, the TLS proxy has visibility into further exchanges between the client and server which enables it to decrypt and inspect subsequent network traffic.</p>
+<p id="rfc.section.1.p.5">For the inbound session scenario, the TLS proxy is configured with a copy of the local servers' certificate(s) and corresponding private key(s). Based on the server certificate presented, the TLS proxy determines the corresponding private key, which again enables the TLS proxy to gain visibility into further exchanges between the client and server and hence decrypt subsequent network traffic.</p>
+<p id="rfc.section.1.p.6">To date, there are a number of use case scenarios that rely on the above capabilities when used with TLS 1.2 <a href="#RFC5246" class="xref">[RFC5246]</a> or earlier. TLS 1.3 <a href="#I-D.ietf-tls-tls13" class="xref">[I-D.ietf-tls-tls13]</a> introduces several changes which prevent a number of these use case scenarios from being satisfied with the types of TLS proxy based capabilities that exist today.</p>
+<p id="rfc.section.1.p.7">It has been noted, that currently deployed TLS proxies (middleboxes) may reduce the security of the TLS connection itself due to a combination of poor implementation and configuration, and they may compromise privacy when decrypting a TLS session. As such, it has been argued that preventing TLS proxies from working should be viewed as a feature of TLS 1.3 and that the proper way of solving these issues is to rely on endpoint (client and server) based solutions instead. We believe this is an overly constrained view of the problem that ignores a number of important real-life use case scenarios that improve the overall security posture. We also note that current endpoint-based TLS proxies suffer from many of the same security issues as the network-based TLS proxies do <a href="#HTTPSintercept" class="xref">[HTTPSintercept]</a>.</p>
+<p id="rfc.section.1.p.8">The purpose of this document is to provide a representative set of <em>network based security</em> use case scenarios that are negatively impacted by TLS 1.3 and do not lend themselves to an endpoint-based alternative solution. For each use case scenario, we highlight the specific aspect(s) of TLS 1.3 that makes the use case problematic with a TLS proxy based solution and we explain why an endpoint-based only solution is not considered acceptable.</p>
+<p id="rfc.section.1.p.9">It should be noted that this document addresses only <em>security</em> use cases with a focus on identifying the problematic ones. The document does not offer specific solutions to these as the goal is to stimulate further discussion and explore possible solutions subsequently.</p>
 <h2 id="rfc.section.1.1">
 <a href="#rfc.section.1.1">1.1.</a> <a href="#requirements-notation" id="requirements-notation">Requirements notation</a>
 </h2>
@@ -702,7 +694,7 @@
 <h2 id="rfc.section.4.8">
 <a href="#rfc.section.4.8">4.8.</a> <a href="#use-case-o8-crypto-security-audit" id="use-case-o8-crypto-security-audit">Use Case O8 - Crypto Security Audit</a>
 </h2>
-<p id="rfc.section.4.8.p.1">This is a variation of the use in <a href="#InboundCryptoSecurityAudit" class="xref">Section 3.4</a>.</p>
+<p id="rfc.section.4.8.p.1">This is a variation of the use case in <a href="#InboundCryptoSecurityAudit" class="xref">Section 3.4</a>.</p>
 <p id="rfc.section.4.8.p.2">Organizations may have policies around acceptable ciphers and certificates for client sessions, possibly based on the destination. Examples include no use of self-signed certificates, black or white-list Certificate Authority, etc. In TLS 1.2, the Certificate message was sent in clear-text, however in TLS 1.3 the message is encrypted thereby preventing either a network-based audit or policy enforcement around acceptable server certificates.</p>
 <p id="rfc.section.4.8.p.3">While the audits and policy enforcements could in theory be done on the clients themselves, not all clients are configured correctly and may not even be directly under configuration control of the organization in question (e.g. due to Bring Your Own Device).</p>
 <h1 id="rfc.section.5">
@@ -712,21 +704,11 @@
 <h1 id="rfc.section.6">
 <a href="#rfc.section.6">6.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a>
 </h1>
-<p id="rfc.section.6.p.1">This document describes existing functionality and use case scenarios and as such does introduce any new security considerations.</p>
-<h1 id="rfc.section.7">
-<a href="#rfc.section.7">7.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a>
-</h1>
-<h1 id="rfc.section.8">
-<a href="#rfc.section.8">8.</a> <a href="#change-log" id="change-log">Change Log</a>
-</h1>
-<p id="rfc.section.8.p.1">First version -00</p>
-<h1 id="rfc.section.9">
-<a href="#rfc.section.9">9.</a> <a href="#contributors" id="contributors">Contributors</a>
-</h1>
+<p id="rfc.section.6.p.1">This document describes existing functionality and use case scenarios and as such does not introduce any new security considerations.</p>
 <h1 id="rfc.references">
-<a href="#rfc.references">10.</a> References</h1>
+<a href="#rfc.references">7.</a> References</h1>
 <h2 id="rfc.references.1">
-<a href="#rfc.references.1">10.1.</a> Normative References</h2>
+<a href="#rfc.references.1">7.1.</a> Normative References</h2>
 <table><tbody>
 <tr>
 <td class="reference"><b id="I-D.ietf-tls-tls13">[I-D.ietf-tls-tls13]</b></td>
@@ -745,7 +727,7 @@
 </tr>
 </tbody></table>
 <h2 id="rfc.references.2">
-<a href="#rfc.references.2">10.2.</a> Informative References</h2>
+<a href="#rfc.references.2">7.2.</a> Informative References</h2>
 <table><tbody>
 <tr>
 <td class="reference"><b id="BreakTLS">[BreakTLS]</b></td>
@@ -766,6 +748,10 @@
 <td class="reference"><b id="I-D.ietf-tls-sni-encryption">[I-D.ietf-tls-sni-encryption]</b></td>
 <td class="top">
 <a>Huitema, C.</a> and <a>E. Rescorla</a>, "<a href="https://tools.ietf.org/html/draft-ietf-tls-sni-encryption-00">SNI Encryption in TLS Through Tunneling</a>", Internet-Draft draft-ietf-tls-sni-encryption-00, August 2017.</td>
+</tr>
+<tr>
+<td class="reference"><b id="NERCCIP">[NERCCIP]</b></td>
+<td class="top">"<a href="http://www.nerc.com/pa/stand/Pages/ReliabilityStandardsUnitedStates.aspx?jurisdiction=United%20States">North American Electric Reliability Corporation, (CIP) Critical Infrastructure Protection</a>", n.d..</td>
 </tr>
 <tr>
 <td class="reference"><b id="PCI-DSS">[PCI-DSS]</b></td>

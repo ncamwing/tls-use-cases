@@ -87,19 +87,24 @@ informative:
   	seriesinfo: "IEEE Symposium on Security and Privacy"
   PCI-DSS:
     title: "Payment Card Industry (PCI): Data Security Standard"
-    date: Aprpil 2016
+    date: April 2016
     target: https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-2.pdf
+  NERCCIP:
+  	title: "North American Electric Reliability Corporation, (CIP) Critical Infrastructure Protection"
+  	target: http://www.nerc.com/pa/stand/Pages/ReliabilityStandardsUnitedStates.aspx?jurisdiction=United%20States
 
 
 
 
 --- abstract
 
-TLS 1.3 introduces several changes to TLS 1.2 with a goal to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions. 
+Network-based security solutions are used by enterprises, public sector, and cloud service providers today in order to both complement and augment host-based security solutions. TLS 1.3 introduces several changes to TLS 1.2 with a goal to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions. 
 
 --- middle
 
 # Introduction
+
+Enterprises, public sector, and cloud service providers need to defend their information systems from attacks originating from both inside and outside their networks. Protection and detection are typically done both on end hosts and in the network. Host agents have deep visibility on the devices where they are installed, whereas the network has broader visibility and provides homogenous security controls across heterogenous endpoints, covering devices for which no host monitoring is available (which is common today and is increasingly so in the Internet of Things). This helps protect against unauthorized devices installed by insiders, and provides a fallback in case the infection of a host disables its security agent. Because of these advantages, network-based security mechanisms are widely used. In fact, regulatory standards such as NERC CIP {{NERCCIP}} place strong requirements about network perimeter security and its ability to have visibility to provide security information to the security management and control systems. At the same time, the privacy of employees, customers, and other users must be respected by minimizing the collection of personal data and controlling access to what data is collected. These imperatives hold for both end host and network based security monitoring.  
 
 Network-based security solutions such as Firewalls (FW) and Intrusion Prevention Systems (IPS) rely on network traffic inspection to implement perimeter-based security policies. Depending on the security functions required, these middleboxes can either be deployed as traffic monitoring devices or active in-line devices. A traffic monitoring middlebox may for example perform vulnerability detection, intrusion detection, crypto audit, compliance monitoring, etc. An active in-line middlebox may for example prevent malware download, block known malicious URLs, enforce use of strong ciphers, stop data exfiltration, etc. A significant portion of such security policies require clear-text traffic inspection above Layer 4, which becomes problematic when traffic is encrypted with Transport Layer Security (TLS) {{RFC5246}}. Today, network-based security solutions typically address this problem by becoming a man-in-the-middle (MITM) for the TLS session according to one of the following two scenarios:
 
@@ -324,7 +329,7 @@ Again, the only way to satisfy the use case scenario around network-based audit 
 
 
 ## Use Case O8 - Crypto Security Audit
-This is a variation of the use in {{InboundCryptoSecurityAudit}}.
+This is a variation of the use case in {{InboundCryptoSecurityAudit}}.
 
 Organizations may have policies around acceptable ciphers and certificates for client sessions, possibly based on the destination. Examples include no use of self-signed certificates, black or white-list Certificate Authority, etc. In TLS 1.2, the Certificate message was sent in clear-text, however in TLS 1.3 the message is encrypted thereby preventing either a network-based audit or policy enforcement around acceptable server certificates. 
 
@@ -335,8 +340,10 @@ While the audits and policy enforcements could in theory be done on the clients 
 This document does not include IANA considerations.
 
 #  Security Considerations
-This document describes existing functionality and use case scenarios and as such does introduce any new security considerations. 
+This document describes existing functionality and use case scenarios and as such does not introduce any new security considerations. 
 
+
+{::comment}
 #  Acknowledgements
 
 
@@ -344,5 +351,6 @@ This document describes existing functionality and use case scenarios and as suc
 First version -00
 
 # Contributors
+{:/comment}
 
 --- back
