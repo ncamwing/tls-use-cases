@@ -413,11 +413,11 @@
   <meta name="generator" content="xml2rfc version 2.8.2 - https://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
-  <meta name="dct.creator" content="Cam-Winget, N., Wang, E., and F. Andreasen" />
+  <meta name="dct.creator" content="Andreasen, F., Cam-Winget, N., and E. Wang" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-camwinget-tls-use-cases" />
   <meta name="dct.issued" scheme="ISO8601" content="2017-10-27" />
-  <meta name="dct.abstract" content="TLS 1.3 introduces several changes to TLS 1.2 in order to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions." />
-  <meta name="description" content="TLS 1.3 introduces several changes to TLS 1.2 in order to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions." />
+  <meta name="dct.abstract" content="TLS 1.3 introduces several changes to TLS 1.2 with a goal to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions." />
+  <meta name="description" content="TLS 1.3 introduces several changes to TLS 1.2 with a goal to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions." />
 
 </head>
 
@@ -428,15 +428,15 @@
     
     	<tr>
 <td class="left">TLS</td>
-<td class="right">N. Cam-Winget</td>
+<td class="right">F. Andreasen</td>
 </tr>
 <tr>
 <td class="left">Internet-Draft</td>
-<td class="right">E. Wang</td>
+<td class="right">N. Cam-Winget</td>
 </tr>
 <tr>
 <td class="left">Intended status: Informational</td>
-<td class="right">F. Andreasen</td>
+<td class="right">E. Wang</td>
 </tr>
 <tr>
 <td class="left">Expires: April 30, 2018</td>
@@ -455,7 +455,7 @@
   <span class="filename">draft-camwinget-tls-use-cases</span></p>
   
   <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
-<p>TLS 1.3 introduces several changes to TLS 1.2 in order to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions.</p>
+<p>TLS 1.3 introduces several changes to TLS 1.2 with a goal to improve the overall security and privacy provided by TLS. However some of these changes have a negative impact on network-based security solutions. While this may be viewed as a feature, there are several real-life use case scenarios that are not easily solved without such network-based security solutions. In this document, we identify the TLS 1.3 changes that may impact network-based security solutions and provide a set of use case scenarios that are not easily solved without such solutions.</p>
 <h1 id="rfc.status"><a href="#rfc.status">Status of This Memo</a></h1>
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
@@ -545,19 +545,19 @@
   <h1 id="rfc.section.1">
 <a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a>
 </h1>
-<p id="rfc.section.1.p.1">Network-based security solutions such as Firewalls (FW) and Intrusion Prevention Systems (IPS) rely on network traffic inspection to implement perimeter-based security policies. Depending on the security functions required, these middleboxes can either be deployed as traffic monitoring devices or active in-line devices. A traffic monitoring middlebox may for example perform vulnerability detection, intrusion detection, crypto audit, compliance monitoring, etc. An active in-line middlebox may for example prevent malware download, block known malicous URLs, enforce use of strong ciphers, stop data exfiltration, etc. A significant portion of such security policies require clear-text traffic inspection above Layer 4, which becomes problematic when traffic is encrypted with Transport Layer Security (TLS) <a href="#RFC5246" class="xref">[RFC5246]</a>. Today, network-based security solutions typically address this problem by becoming a man-in-the-middle (MITM) for the TLS session according to one of the following two scenarios:</p>
+<p id="rfc.section.1.p.1">Network-based security solutions such as Firewalls (FW) and Intrusion Prevention Systems (IPS) rely on network traffic inspection to implement perimeter-based security policies. Depending on the security functions required, these middleboxes can either be deployed as traffic monitoring devices or active in-line devices. A traffic monitoring middlebox may for example perform vulnerability detection, intrusion detection, crypto audit, compliance monitoring, etc. An active in-line middlebox may for example prevent malware download, block known malicious URLs, enforce use of strong ciphers, stop data exfiltration, etc. A significant portion of such security policies require clear-text traffic inspection above Layer 4, which becomes problematic when traffic is encrypted with Transport Layer Security (TLS) <a href="#RFC5246" class="xref">[RFC5246]</a>. Today, network-based security solutions typically address this problem by becoming a man-in-the-middle (MITM) for the TLS session according to one of the following two scenarios:</p>
 <p></p>
 
 <ol>
 <li>Outbound Session, where the TLS session originates from a client inside the perimeter towards an entity on the outside</li>
 <li>Inbound Session, where the TLS session originates from a client outside the perimeter towards an entity on the inside</li>
 </ol>
-<p id="rfc.section.1.p.3">For the outbound session scenario, MITM is enabled by generating a local root certificate and an accompanying (local) public/private key pair. The local root certificate is installed on the inside entities for which TLS traffic is to be inspected, and the network security device(s) store a copy of the private key. During the TLS handshake, the network security device (hereafter referred to as a TLS proxy) modifies the certificate provided by the (outside) server and (re)signs it with the private key from the local root certificate. From here on, the TLS proxy has visibility into further exchanges between the client and server which enables it to to decrypt and inspect subsequent network traffic.</p>
+<p id="rfc.section.1.p.3">For the outbound session scenario, MITM is enabled by generating a local root certificate and an accompanying (local) public/private key pair. The local root certificate is installed on the inside entities for which TLS traffic is to be inspected, and the network security device(s) store a copy of the private key. During the TLS handshake, the network security device (hereafter referred to as a TLS proxy) modifies the certificate provided by the (outside) server and (re)signs it with the private key from the local root certificate. From here on, the TLS proxy has visibility into further exchanges between the client and server which enables it to decrypt and inspect subsequent network traffic.</p>
 <p id="rfc.section.1.p.4">For the inbound session scenario, the TLS proxy is configured with a copy of the local servers' certificate(s) and corresponding private key(s). Based on the server certificate presented, the TLS proxy determines the corresponding private key, which again enables the TLS proxy to gain visibility into further exchanges between the client and server and hence decrypt subsequent network traffic.</p>
 <p id="rfc.section.1.p.5">To date, there are a number of use case scenarios that rely on the above capabilities when used with TLS 1.2 <a href="#RFC5246" class="xref">[RFC5246]</a> or earlier. TLS 1.3 <a href="#I-D.ietf-tls-tls13" class="xref">[I-D.ietf-tls-tls13]</a> introduces several changes which prevent a number of these use case scenarios from being satisfied with the types of TLS proxy based capabilities that exist today.</p>
 <p id="rfc.section.1.p.6">It has been noted, that currently deployed TLS proxies (middleboxes) may reduce the security of the TLS connection itself due to a combination of poor implementation and configuration, and they may compromise privacy when decrypting a TLS session. As such, it has been argued that preventing TLS proxies from working should be viewed as a feature of TLS 1.3 and that the proper way of solving these issues is to rely on endpoint (client and server) based solutions instead. We believe this is an overly constrained view of the problem that ignores a number of important real-life use case scenarios that improve the overall security posture. We also note that current endpoint-based TLS proxies suffer from many of the same security issues as the network-based TLS proxies do <a href="#HTTPSintercept" class="xref">[HTTPSintercept]</a>.</p>
 <p id="rfc.section.1.p.7">The purpose of this document is to provide a representative set of <em>network based security</em> use case scenarios that are negatively impacted by TLS 1.3 and do not lend themselves to an endpoint-based alternative solution. For each use case scenario, we highlight the specific aspect(s) of TLS 1.3 that makes the use case problematic with a TLS proxy based solution and we explain why an endpoint-based only solution is not considered acceptable.</p>
-<p id="rfc.section.1.p.8">It should be noted that this document is looking only at <em>security</em> use cases with a focus on identifying the problematic ones. The document does not offer specific solutions to these; the goal is to stimulate further discussion and explore possible solutions subsequently.</p>
+<p id="rfc.section.1.p.8">It should be noted that this document addresses only <em>security</em> use cases with a focus on identifying the problematic ones. The document does not offer specific solutions to these as the goal is to stimulate further discussion and explore possible solutions subsequently.</p>
 <h2 id="rfc.section.1.1">
 <a href="#rfc.section.1.1">1.1.</a> <a href="#requirements-notation" id="requirements-notation">Requirements notation</a>
 </h2>
@@ -565,7 +565,7 @@
 <h1 id="rfc.section.2">
 <a href="#rfc.section.2">2.</a> <a href="#tls-13-change-impact-overview" id="tls-13-change-impact-overview">TLS 1.3 Change Impact Overview</a>
 </h1>
-<p id="rfc.section.2.p.1">TlS 1.3 introduces several changes to TLS 1.2 in order to improve the overall privacy and security of TLS, however in doing so, some of the changes have a negative impact on network based security. In this section, we describe those TLS 1.3 changes and briefly outline some scenario impacts. We divide the changes into two groups; those that impact inbound sessions and those that impact outbound sessions.</p>
+<p id="rfc.section.2.p.1">To improve its overall security and privacy, TLS 1.3 introduces several changes to TLS 1.2; in doing so, some of the changes present a negative impact on network based security. In this section, we describe those TLS 1.3 changes and briefly outline some scenario impacts. We divide the changes into two groups; those that impact inbound sessions and those that impact outbound sessions.</p>
 <h2 id="rfc.section.2.1">
 <a href="#rfc.section.2.1">2.1.</a> <a href="#inbound-session-change-impacts" id="inbound-session-change-impacts">Inbound Session Change Impacts</a>
 </h2>
@@ -584,7 +584,7 @@
 <p id="rfc.section.2.2.1.p.1">In TLS 1.2, the ClientHello message is sent to the server's transport address (IP and port). The ClientHello message may include the Server Name Indication (SNI) to specify the actual server the client wishes to contact. This is useful when multiple "virtual servers" are hosted on a given transport address (IP and port). It also provides information about the domain the client is attempting to reach.</p>
 <p id="rfc.section.2.2.1.p.2">The server replies with a ServerHello message, which contains the selected connection parameters, followed by a Certificate message, which contains the server's certificate and hence its identity.</p>
 <p id="rfc.section.2.2.1.p.3">In TLS 1.2, the ClientHello, ServerHello and Certificate messages are all sent in clear-text, however in TLS 1.3, the Certificate message is encrypted thereby hiding the server identity from any intermediary. Note that even <em>if</em> the SNI is provided (in cleartext) by the client, there is no guarantee that the actual server responding is the one indicated in the SNI from the client.</p>
-<p id="rfc.section.2.2.1.p.4">Example scenarios that are impacted by this involve selective network security, such as whitelists or blacklists based on security intelligence, regulatory requirements, categories (e.g. finanicial services), etc. An added challenge is that some of these scenarios require the middlebox to perform inspection, whereas other scenarios require the middlebox to <em>not</em> perform inspection.</p>
+<p id="rfc.section.2.2.1.p.4">Example scenarios that are impacted by this involve selective network security, such as whitelists or blacklists based on security intelligence, regulatory requirements, categories (e.g. financial services), etc. An added challenge is that some of these scenarios require the middlebox to perform inspection, whereas other scenarios require the middlebox to <em>not</em> perform inspection.</p>
 <h3 id="rfc.section.2.2.2">
 <a href="#rfc.section.2.2.2">2.2.2.</a> <a href="#resumption-and-pre-shared-key" id="resumption-and-pre-shared-key">Resumption and Pre-Shared Key</a>
 </h3>
@@ -602,7 +602,7 @@
 <a href="#rfc.section.2.2.4">2.2.4.</a> <a href="#version-negotiation-and-downgrade-protection" id="version-negotiation-and-downgrade-protection">Version Negotiation and Downgrade Protection</a>
 </h3>
 <p id="rfc.section.2.2.4.p.1">In TLS, the ClientHello message includes a list of supported protocol versions. The server will select the highest supported version and indicate its choice in the ServerHello message.</p>
-<p id="rfc.section.2.2.4.p.2">TLS 1.3 changes the way in which version negotation is performed. The ClientHello message will indicate TLS version 1.3 in the new "supported_versions" extension, however for backwards compatility with TLS 1.2, the ClientHellow message will indicate TLS version 1.2 in the "legacy_version" field. A TLS 1.3 server will recognize that TLS 1.3 is being negotiated, whereas a TLS 1.2 server will simply see a TLS 1.2 ClientHello and proceed with TLS 1.2 negotiation.</p>
+<p id="rfc.section.2.2.4.p.2">TLS 1.3 changes the way in which version negotiation is performed. The ClientHello message will indicate TLS version 1.3 in the new "supported_versions" extension, however for backwards compatibility with TLS 1.2, the ClientHellow message will indicate TLS version 1.2 in the "legacy_version" field. A TLS 1.3 server will recognize that TLS 1.3 is being negotiated, whereas a TLS 1.2 server will simply see a TLS 1.2 ClientHello and proceed with TLS 1.2 negotiation.</p>
 <p id="rfc.section.2.2.4.p.3">In TLS 1.3, the random value in the ServerHello message includes a special value in the last eight bytes when the server negotiates either TLS 1.2 or TLS 1.1 and below. The special value(s) enable a TLS 1.3 client to detect an active attacker launching a downgrade attack when the client did indeed reach a TLS 1.3 server, provided ephemeral ciphers are being used.</p>
 <p id="rfc.section.2.2.4.p.4">From a network security point of view, the primary impact is that TLS 1.3 requires the TLS proxy to be an active man-in-the-middle from the start of the handshake (as explained in <a href="#DisengageMiddlebox" class="xref">Section 2.2.3</a>). However, a middlebox that supports only TLS 1.2 may let the initial TLS 1.3 ClientHello proceed resulting in a TLS 1.3 ServerHello from the server, which the middlebox does not support. Depending on the policy configured, the TLS proxy may reject the session at that point.</p>
 <p id="rfc.section.2.2.4.p.5">If the TLS 1.2 middlebox takes on an active role in the handshake from the start, then the middlebox effectively proxies between a client-to-middlebox and a middlebox-to-server TLS connection, in which case the handshake succeeds (but as TLS 1.2). Note that due to downgrade protection, the proxy cannot simply downgrade the TLS version to 1.2 in the ClientHellow, which would enable it to disengage from the handshake later.</p>
@@ -619,8 +619,8 @@
 <h2 id="rfc.section.3.1">
 <a href="#rfc.section.3.1">3.1.</a> <a href="#use-case-i1-data-center-protection" id="use-case-i1-data-center-protection">Use Case I1 - Data Center Protection</a>
 </h2>
-<p id="rfc.section.3.1.p.1">Services deployed in data center may be offered for access by external and untrusted hosts. Network security functions such as IPS and Web Application Firewall (WAF) are deployed to monitor and control the transactions to the services. Application level load balancer is not a security function strictly speaking but is also an important function in front of the services.</p>
-<p id="rfc.section.3.1.p.2">Network security function are usually deployed in two modes, monitoring and inline.  In either case, they need to access the L7 and application data such as HTTP transactions which could be protected by TLS encryption. They may monitor the TLS handshakes for additional visibility and control.</p>
+<p id="rfc.section.3.1.p.1">Services deployed in the data center may be offered for access by external and untrusted hosts. Network security functions such as IPS and Web Application Firewall (WAF) are deployed to monitor and control the transactions to these services. While an Application level load balancer is not a security function strictly speaking, it is also an important function that resides in front of these services</p>
+<p id="rfc.section.3.1.p.2">These network security functions are usually deployed in two modes: monitoring and inline.  In either case, they need to access the L7 and application data such as HTTP transactions which could be protected by TLS encryption. They may monitor the TLS handshakes for additional visibility and control.</p>
 <p id="rfc.section.3.1.p.3">The TLS handshake monitoring function will be impacted by TLS 1.3.</p>
 <p id="rfc.section.3.1.p.4">For additional considerations on this scenario, see also <a href="#I-D.green-tls-static-dh-in-tls13" class="xref">[I-D.green-tls-static-dh-in-tls13]</a>.</p>
 <h2 id="rfc.section.3.2">
@@ -629,11 +629,11 @@
 <p id="rfc.section.3.2.p.1">The Network Address Translation (NAT) function translates L3 and L4 addresses and ports as the packet traverses the network device.  Sophisticated NAT devices may also implement application inspection engines to correct L3/L4 data embedded in the control messages (e.g., FTP control message, SIP signaling messages) so that they are consistent with the outer L3/L4 headers.</p>
 <p id="rfc.section.3.2.p.2">Without the correction, the secondary data (FTP) or media (SIP) connections will likely reach a wrong destination.</p>
 <p id="rfc.section.3.2.p.3">The embedded address and port correction operation requires access to the L7 payload which could be protected by encryption.</p>
-<p id="rfc.section.3.2.p.4">TLS 1.3 will not prevent the middlebox from performing this function, however, once starting the proxy function, the middlebox is not able to remove itself from the packet path for the particular session.</p>
+<p id="rfc.section.3.2.p.4">While TLS 1.3 will not prevent the middlebox from performing this function, once a proxy function is established, the middlebox is not able to remove itself from the packet path for the particular session.</p>
 <h2 id="rfc.section.3.3">
 <a href="#rfc.section.3.3">3.3.</a> <a href="#InboundCompliance" id="InboundCompliance">Use Case I3 - Compliance</a>
 </h2>
-<p id="rfc.section.3.3.p.1">Many regulations exist today that include cyber security requirements that require close inspection of the information traversing through the network.  For example, organizations that require PCI-DSS <a href="#PCI-DSS" class="xref">[PCI-DSS]</a> compliance must provide the ability to regularly monitor the network to prevent, detect and minimize impact of a data compromise.  <a href="#PCI-DSS" class="xref">[PCI-DSS]</a> Requirement #2 (and Appendix A2 as it concerns TLS) describes the need to be able to detect protocol and protocol usage correctness. Further, <a href="#PCI-DSS" class="xref">[PCI-DSS]</a> Requirement #10 detailing monitoring capabilities also describe the need to provide network-based audit to ensure that the protocols and configurations are properly used.</p>
+<p id="rfc.section.3.3.p.1">Many regulations exist today that include cyber security requirements requiring close inspection of the information traversing through the network.  For example, organizations that require PCI-DSS <a href="#PCI-DSS" class="xref">[PCI-DSS]</a> compliance must provide the ability to regularly monitor the network to prevent, detect and minimize impact of a data compromise.  <a href="#PCI-DSS" class="xref">[PCI-DSS]</a> Requirement #2 (and Appendix A2 as it concerns TLS) describes the need to be able to detect protocol and protocol usage correctness. Further, <a href="#PCI-DSS" class="xref">[PCI-DSS]</a> Requirement #10 detailing monitoring capabilities also describe the need to provide network-based audit to ensure that the protocols and configurations are properly used.</p>
 <p id="rfc.section.3.3.p.2">Deployments today still use factory or default credentials and settings that must be observed, and to meet regulatory compliance, must be audited, logged and reported.  As the server (certificate) credential is now encrypted in TLS 1.3, the ability to verify the appropriate (or compliant) use of these credentials are lost, unless the middlebox always becomes an active MITM.</p>
 <h2 id="rfc.section.3.4">
 <a href="#rfc.section.3.4">3.4.</a> <a href="#InboundCryptoSecurityAudit" id="InboundCryptoSecurityAudit">Use Case I4 - Crypto Security Audit</a>
@@ -781,6 +781,28 @@
 <div class="avoidbreak">
   <address class="vcard">
 	<span class="vcardline">
+	  <span class="fn">Flemming Andreasen</span> 
+	  <span class="n hidden">
+		<span class="family-name">Andreasen</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Cisco Systems</span>
+	<span class="adr">
+	  <span class="vcardline">111 Wood Avenue South</span>
+
+	  <span class="vcardline">
+		<span class="locality">Iselin</span>,  
+		<span class="region">NJ</span> 
+		<span class="code">08830</span>
+	  </span>
+	  <span class="country-name vcardline">USA</span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:fandreas@cisco.com">fandreas@cisco.com</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
 	  <span class="fn">Nancy Cam-Winget</span> 
 	  <span class="n hidden">
 		<span class="family-name">Cam-Winget</span>
@@ -820,28 +842,6 @@
 	  <span class="country-name vcardline">USA</span>
 	</span>
 	<span class="vcardline">EMail: <a href="mailto:ejwang@cisco.com">ejwang@cisco.com</a></span>
-
-  </address>
-</div><div class="avoidbreak">
-  <address class="vcard">
-	<span class="vcardline">
-	  <span class="fn">Flemming Andreasen</span> 
-	  <span class="n hidden">
-		<span class="family-name">Andreasen</span>
-	  </span>
-	</span>
-	<span class="org vcardline">Cisco Systems</span>
-	<span class="adr">
-	  <span class="vcardline">111 Wood Avenue South</span>
-
-	  <span class="vcardline">
-		<span class="locality">Iselin</span>,  
-		<span class="region">NJ</span> 
-		<span class="code">08830</span>
-	  </span>
-	  <span class="country-name vcardline">USA</span>
-	</span>
-	<span class="vcardline">EMail: <a href="mailto:fandreas@cisco.com">fandreas@cisco.com</a></span>
 
   </address>
 </div>
