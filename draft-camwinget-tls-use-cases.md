@@ -75,16 +75,6 @@ informative:
 	- ins: J. Halderman
 	- ins: V. Paxson
 	date: February 2017
-  BreakTLS:
-	title: "Triple Handshakes and Cookie Cutters: Breaking and Fixing Authentication over TLS"
-  	author:
-  	- ins: K. Bhargavan
-  	- ins: A. Delignat-Lavaud
-  	- ins: C. Fournet
-  	- ins: A. Pironti
-  	- ins: P. Strub
-  	date: 2014
-  	seriesinfo: "IEEE Symposium on Security and Privacy"
   PCI-DSS:
     title: "Payment Card Industry (PCI): Data Security Standard"
     date: April 2016
@@ -169,15 +159,6 @@ In TLS 1.2 and below, session resumption is provided by "session IDs" and "sessi
 In TLS 1.3, the above mechanism is replaced by Pre-Shared Keys (PSK), which can be negotiated as part of an initial handshake and then used in a subsequent handshake to perform resumption using the PSK. TLS 1.3 states that the client SHOULD include a "key_share" extension to enable the server to decline resumption and fall back to a full handshake, however it is not an absolute requirement. 
 
 Example scenarios that are impacted by this are middleboxes that were not part of the initial handshake, and hence do not know the PSK. If the client does not include the "key_share" extension, the middlebox cannot force a fallback to the full handshake. If the middlebox policy requires it to inspect the session, it will have to fail the connection instead. 
- 
-###Ability to Disengage Middlebox Proxy {#DisengageMiddlebox}
-Network security middleboxes intercept or proxy TLS sessions for acceptable use policy, protocol inspection, malware scanning and other purposes.  For compliance and privacy reasons, middleboxes must be able to engage and disengage the proxy function seamlessly without affecting user experience. For example, privacy laws may prohibit middleboxes from intercepting banking traffic even if it is within the enterprise network and outbound network traffic is subject to inspection legally.
-
-There are several techniques that can be utilized.  Those techniques function with TLS 1.2 and earlier versions but not with TLS 1.3.
-
-One technique is for the middlebox to negotiate the same master secret with the original TLS client and server, as if the two endpoints handshake directly. This is also known as "Triple Handshake" used by legitimate middleboxes. {{BreakTLS}} describes the methods with RSA and DH key exchanges.  When the proxy session keys are the same as for a direct handshake, the middlebox is able to "cut-through" the two TLS proxy sessions when it finishes the security inspection.
-
-This technique is not functional with TLS 1.3 since the transcript hash over the handshake messages is part of the key derivation procedure.
 
 
 ###Version Negotiation and Downgrade Protection
