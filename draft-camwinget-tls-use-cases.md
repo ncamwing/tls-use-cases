@@ -1,7 +1,7 @@
 ---
 
 title: TLS 1.3 Impact on Network-Based Security
-docname: draft-camwinget-tls-use-cases-00
+docname: draft-camwinget-tls-use-cases-01
 date: @DATE@
 
 ipr: trust200902
@@ -61,6 +61,7 @@ informative:
   I-D.green-tls-static-dh-in-tls13:
   I-D.ietf-tls-sni-encryption:
   RFC5077:
+  RFC7627:
   HTTPSintercept:
   	target: https://jhalderm.com/pub/papers/interception-ndss17.pdf
 	title: The Security Impact of HTTPS Interception
@@ -160,7 +161,7 @@ The server replies with a ServerHello message, which contains the selected conne
 
 In TLS 1.2, the ClientHello, ServerHello and Certificate messages are all sent in clear-text, however in TLS 1.3, the Certificate message is encrypted thereby hiding the server identity from any intermediary. Note that even *if* the SNI is provided (in cleartext) by the client, there is no guarantee that the actual server responding is the one indicated in the SNI from the client. 
 
-Example scenarios that are impacted by this involve selective network security, such as whitelists or blacklists based on security intelligence, regulatory requirements, categories (e.g. financial services), etc. An added challenge is that some of these scenarios require the middlebox to perform inspection, whereas other scenarios require the middlebox to *not* perform inspection.
+Example scenarios that are impacted by this involve selective network security, such as whitelists or blacklists based on security intelligence, regulatory requirements, categories (e.g. financial services), etc. An added challenge is that some of these scenarios require the middlebox to perform inspection, whereas other scenarios require the middlebox to *not* perform inspection. Note that the use cases cited here assume a conformant client and server that are not actively trying to evade the middlebox inspection. A non-conformant client and server that collude can always evade middlebox inspection if the middlebox policy is based on information provided by the client or server, such as SNI or certificate. 
 
 
 ###Resumption and Pre-Shared Key 
@@ -169,6 +170,11 @@ In TLS 1.2 and below, session resumption is provided by "session IDs" and "sessi
 In TLS 1.3, the above mechanism is replaced by Pre-Shared Keys (PSK), which can be negotiated as part of an initial handshake and then used in a subsequent handshake to perform resumption using the PSK. TLS 1.3 states that the client SHOULD include a "key_share" extension to enable the server to decline resumption and fall back to a full handshake, however it is not an absolute requirement. 
 
 Example scenarios that are impacted by this are middleboxes that were not part of the initial handshake, and hence do not know the PSK. If the client does not include the "key_share" extension, the middlebox cannot force a fallback to the full handshake. If the middlebox policy requires it to inspect the session, it will have to fail the connection instead. 
+
+Note that in practice though, it is unlikely that clients using session resumption will not allow for fallback to a full handshake since the server may treat a ticket as valid for a shorter period of time that what is stated in the ticket_lifetime {{I-D.ietf-tls-tls13}}. As long as the client advertises a supported DH group, the server (or middlebox) can always send a HelloRetryRequest to force the client to send a key_share and hence a full handshake. 
+
+Clients that truly only support PSK mode of operation (provisioned out of band) will of course not negotiate a new key, however that is not a change in TLS 1.3. 
+
  
 ###Ability to Disengage Middlebox Proxy {#DisengageMiddlebox}
 Network security middleboxes intercept or proxy TLS sessions for acceptable use policy, protocol inspection, malware scanning and other purposes.  For compliance and privacy reasons, middleboxes must be able to engage and disengage the proxy function seamlessly without affecting user experience. For example, privacy laws may prohibit middleboxes from intercepting banking traffic even if it is within the enterprise network and outbound network traffic is subject to inspection legally.
@@ -178,12 +184,18 @@ There are several techniques that can be utilized.  Those techniques function wi
 One technique is for the middlebox to negotiate the same master secret with the original TLS client and server, as if the two endpoints handshake directly. This is also known as "Triple Handshake" used by legitimate middleboxes. {{BreakTLS}} describes the methods with RSA and DH key exchanges.  When the proxy session keys are the same as for a direct handshake, the middlebox is able to "cut-through" the two TLS proxy sessions when it finishes the security inspection.
 
 This technique is not functional with TLS 1.3 since the transcript hash over the handshake messages is part of the key derivation procedure.
+ 
+While technically a change in TLS 1.3, it must be noted, that the "Triple Handshake" approach suffers from two problems. First of all, the technique used for the DH key exchange results in an insecure Master Secret, and hence should never be used in practice (see Section V-B in {{BreakTLS}}). Secondly, the technique used with both RSA and DH are known as an Unknown Key Share attack (UKS) against the two endpoints, which ultimately can be the basis of real attacks on TLS 1.2 itself. To protect against UKS, RFC 7627 {{RFC7627}} defined the TLS Session Hash and the Extended Master Secret for use with TLS 1.2 and earlier versions. 
 
+As noted in {{BreakTLS}}, Elliptic Curve DH (ECDH) is in theory suspectible to the same attack, however current TLS implementations all support well-known named curves standardized by NIST, which would prevent the attack (and hence use of the method). As TLS 1.2 implementations increasingly adopt use of ECDH, this implies the method is increasingly unlikely to work with TLS 1.2 anyway.
+
+In summary, the above implies that in practice, the change in transcript hash introduced in TLS 1.3 does not impact the ability to disengage (or not) the middlebox compared to TLS 1.2.
+ 
 
 ###Version Negotiation and Downgrade Protection
 In TLS, the ClientHello message includes a list of supported protocol versions. The server will select the highest supported version and indicate its choice in the ServerHello message.  
 
-TLS 1.3 changes the way in which version negotiation is performed. The ClientHello message will indicate TLS version 1.3 in the new "supported_versions" extension, however for backwards compatibility with TLS 1.2, the ClientHellow message will indicate TLS version 1.2 in the "legacy_version" field. A TLS 1.3 server will recognize that TLS 1.3 is being negotiated, whereas a TLS 1.2 server will simply see a TLS 1.2 ClientHello and proceed with TLS 1.2 negotiation. 
+TLS 1.3 changes the way in which version negotiation is performed. The ClientHello message will indicate TLS version 1.3 in the new "supported_versions" extension, however for backwards compatibility with TLS 1.2, the ClientHello message will indicate TLS version 1.2 in the "legacy_version" field. A TLS 1.3 server will recognize that TLS 1.3 is being negotiated, whereas a TLS 1.2 server will simply see a TLS 1.2 ClientHello and proceed with TLS 1.2 negotiation. 
 
 In TLS 1.3, the random value in the ServerHello message includes a special value in the last eight bytes when the server negotiates either TLS 1.2 or TLS 1.1 and below. The special value(s) enable a TLS 1.3 client to detect an active attacker launching a downgrade attack when the client did indeed reach a TLS 1.3 server, provided ephemeral ciphers are being used.
 
@@ -343,13 +355,15 @@ This document does not include IANA considerations.
 This document describes existing functionality and use case scenarios and as such does not introduce any new security considerations. 
 
 
-{::comment}
 #  Acknowledgements
-
+Eric Rescorla provided several comments on technical accuracy and middlebox security implications.
 
 #  Change Log
-First version -00
 
+## Version -01
+Updates based on comments from Eric Rescorla.
+
+{::comment}
 # Contributors
 {:/comment}
 
