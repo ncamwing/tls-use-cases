@@ -76,16 +76,6 @@ informative:
 	- ins: J. Halderman
 	- ins: V. Paxson
 	date: February 2017
-  BreakTLS:
-	title: "Triple Handshakes and Cookie Cutters: Breaking and Fixing Authentication over TLS"
-  	author:
-  	- ins: K. Bhargavan
-  	- ins: A. Delignat-Lavaud
-  	- ins: C. Fournet
-  	- ins: A. Pironti
-  	- ins: P. Strub
-  	date: 2014
-  	seriesinfo: "IEEE Symposium on Security and Privacy"
   PCI-DSS:
     title: "Payment Card Industry (PCI): Data Security Standard"
     date: April 2016
@@ -171,6 +161,7 @@ In TLS 1.3, the above mechanism is replaced by Pre-Shared Keys (PSK), which can 
 
 Example scenarios that are impacted by this are middleboxes that were not part of the initial handshake, and hence do not know the PSK. If the client does not include the "key_share" extension, the middlebox cannot force a fallback to the full handshake. If the middlebox policy requires it to inspect the session, it will have to fail the connection instead. 
 
+
 Note that in practice though, it is unlikely that clients using session resumption will not allow for fallback to a full handshake since the server may treat a ticket as valid for a shorter period of time that what is stated in the ticket_lifetime {{I-D.ietf-tls-tls13}}. As long as the client advertises a supported DH group, the server (or middlebox) can always send a HelloRetryRequest to force the client to send a key_share and hence a full handshake. 
 
 Clients that truly only support PSK mode of operation (provisioned out of band) will of course not negotiate a new key, however that is not a change in TLS 1.3. 
@@ -188,6 +179,7 @@ This technique is not functional with TLS 1.3 since the transcript hash over the
 While technically a change in TLS 1.3, it must be noted, that the "Triple Handshake" approach suffers from two problems. First of all, the technique used for the DH key exchange results in an insecure Master Secret, and hence should never be used in practice (see Section V-B in {{BreakTLS}}). Secondly, the technique used with both RSA and DH are known as an Unknown Key Share attack (UKS) against the two endpoints, which ultimately can be the basis of real attacks on TLS 1.2 itself. To protect against UKS, RFC 7627 {{RFC7627}} defined the TLS Session Hash and the Extended Master Secret for use with TLS 1.2 and earlier versions. 
 
 As noted in {{BreakTLS}}, Elliptic Curve DH (ECDH) is in theory suspectible to the same attack, however current TLS implementations all support well-known named curves standardized by NIST, which would prevent the attack (and hence use of the method). As TLS 1.2 implementations increasingly adopt use of ECDH, this implies the method is increasingly unlikely to work with TLS 1.2 anyway.
+=======
 
 In summary, the above implies that in practice, the change in transcript hash introduced in TLS 1.3 does not impact the ability to disengage (or not) the middlebox compared to TLS 1.2.
  
