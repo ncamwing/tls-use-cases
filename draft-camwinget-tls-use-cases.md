@@ -129,7 +129,8 @@ In TLS 1.2, the ClientHello, ServerHello and Certificate messages are all sent i
 
 Example scenarios that are impacted by this involve selective network security policies, such as whitelists or blacklists based on security intelligence, regulatory requirements, categories (e.g. financial services), etc. An added challenge is that some of these scenarios require the middlebox to perform decryption and inspection, whereas other scenarios require the middlebox to *not* perform decryption or inspection. The middlebox is not able to make the policy decisions without actively engaging in the TLS session from the beginning of the handshake.
 
-Note that the use cases cited here assume a conformant client and server that are not actively trying to evade the middlebox inspection. A non-conformant client and server that collude can always evade middlebox inspection if the middlebox policy is based on information provided by the client or server, such as SNI or certificate. 
+From a network infrastructure perspective,  policies to validate SNI against the Server Certificate can not be validated as the Server certificate is now obscured to the middlebox.  Furthermore, policies that may require richer information about the TLS Server obtained from the Server certificate are also impacted as the certficate is now encrypted.  These policies go to use cases where enterprises require assurances that their devices are protected from non-conforming servers.
+
 
 ###Resumption and Pre-Shared Key
 In TLS 1.2 and below, session resumption is provided by "session IDs" and "session tickets" {{RFC5077}}. If the server does not want to honor a ticket, then it can simply initiate a full TLS handshake with the client as usual.

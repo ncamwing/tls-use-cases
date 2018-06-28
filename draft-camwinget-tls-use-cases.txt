@@ -2,15 +2,15 @@
 
 
 
-TLS                                                         F. Andreasen
+Network Working Group                                       F. Andreasen
 Internet-Draft                                             N. Cam-Winget
 Intended status: Informational                                   E. Wang
-Expires: July 14, 2018                                     Cisco Systems
-                                                        January 10, 2018
+Expires: December 17, 2018                                 Cisco Systems
+                                                           June 15, 2018
 
 
                 TLS 1.3 Impact on Network-Based Security
-                    draft-camwinget-tls-use-cases-01
+                    draft-camwinget-tls-use-cases-02
 
 Abstract
 
@@ -42,7 +42,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on July 14, 2018.
+   This Internet-Draft will expire on December 17, 2018.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Andreasen, et al.         Expires July 14, 2018                 [Page 1]
+Andreasen, et al.       Expires December 17, 2018               [Page 1]
 
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
+Internet-Draft                     I-D                         June 2018
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -67,52 +67,6 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    include Simplified BSD License text as described in Section 4.e of
    the Trust Legal Provisions and are provided without warranty as
    described in the Simplified BSD License.
-
-Table of Contents
-
-   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
-     1.1.  Requirements notation . . . . . . . . . . . . . . . . . .   5
-   2.  TLS 1.3 Change Impact Overview  . . . . . . . . . . . . . . .   5
-     2.1.  Inbound Session Change Impacts  . . . . . . . . . . . . .   5
-       2.1.1.  Removal of Static RSA and Diffie-Hellman Cipher
-               Suites  . . . . . . . . . . . . . . . . . . . . . . .   5
-     2.2.  Outbound Session Change Impacts . . . . . . . . . . . . .   5
-       2.2.1.  Encrypted Server Certificate  . . . . . . . . . . . .   5
-       2.2.2.  Resumption and Pre-Shared Key . . . . . . . . . . . .   6
-       2.2.3.  Ability to Disengage Middlebox Proxy  . . . . . . . .   7
-       2.2.4.  Version Negotiation and Downgrade Protection  . . . .   8
-       2.2.5.  SNI Encryption in TLS Through Tunneling . . . . . . .   9
-   3.  Inbound Session Use Cases . . . . . . . . . . . . . . . . . .   9
-     3.1.  Use Case I1 - Data Center Protection  . . . . . . . . . .   9
-     3.2.  Use Case I2 - Application Operation over NAT  . . . . . .  10
-     3.3.  Use Case I3 - Compliance  . . . . . . . . . . . . . . . .  10
-     3.4.  Use Case I4 - Crypto Security Audit . . . . . . . . . . .  10
-   4.  Outbound Session Use Cases  . . . . . . . . . . . . . . . . .  11
-     4.1.  Use Case O1 - Acceptable Use Policy (AUP) . . . . . . . .  11
-     4.2.  Use Case O2 - Malware and Threat Protection . . . . . . .  12
-     4.3.  Use Case O3 - IoT Endpoints . . . . . . . . . . . . . . .  12
-     4.4.  Use Case O4 - Unpatched Endpoints . . . . . . . . . . . .  12
-     4.5.  Use Case O5 - Rapid Containment of New Vulnerability and
-           Campaigns . . . . . . . . . . . . . . . . . . . . . . . .  13
-     4.6.  Use Case O6 - End-of-Life Endpoint  . . . . . . . . . . .  13
-     4.7.  Use Case O7 - Compliance  . . . . . . . . . . . . . . . .  13
-     4.8.  Use Case O8 - Crypto Security Audit . . . . . . . . . . .  14
-   5.  IANA considerations . . . . . . . . . . . . . . . . . . . . .  14
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  14
-   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  14
-   8.  Change Log  . . . . . . . . . . . . . . . . . . . . . . . . .  14
-     8.1.  Version -01 . . . . . . . . . . . . . . . . . . . . . . .  14
-   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
-     9.1.  Normative References  . . . . . . . . . . . . . . . . . .  14
-     9.2.  Informative References  . . . . . . . . . . . . . . . . .  15
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  16
-
-
-
-Andreasen, et al.         Expires July 14, 2018                 [Page 2]
-
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
-
 
 1.  Introduction
 
@@ -153,6 +107,13 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    address this problem by becoming a man-in-the-middle (MITM) for the
    TLS session according to one of the following two scenarios:
 
+
+
+Andreasen, et al.       Expires December 17, 2018               [Page 2]
+
+Internet-Draft                     I-D                         June 2018
+
+
    1.  Outbound Session, where the TLS session originates from a client
        inside the perimeter towards an entity on the outside
 
@@ -162,29 +123,28 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    For the outbound session scenario, MITM is enabled by generating a
    local root certificate and an accompanying (local) public/private key
    pair.  The local root certificate is installed on the inside entities
-
-
-
-Andreasen, et al.         Expires July 14, 2018                 [Page 3]
-
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
-
-
    for which TLS traffic is to be inspected, and the network security
    device(s) store a copy of the private key.  During the TLS handshake,
-   the network security device (hereafter referred to as a TLS proxy)
-   modifies the certificate provided by the (outside) server and
-   (re)signs it with the private key from the local root certificate.
-   From here on, the TLS proxy has visibility into further exchanges
-   between the client and server which enables it to decrypt and inspect
-   subsequent network traffic.
+   the network security device (hereafter referred to as a middlebox)
+   makes a policy decision on the current TLS session.  The policy
+   decision could be pass-through, decrypt, deny, etc.  On a "decrypt"
+   policy action, the middlebox invokes TLS proxy to modify the
+   certificate provided by the (outside) server and (re)signs it with
+   the private key from the local root certificate.  From here on, the
+   middlebox has visibility into further exchanges between the client
+   and server which enables it to decrypt and inspect subsequent network
+   traffic.  Alternatively, the middlebox may allow the current session
+   to pass through if it starts in a passive monitoing mode.  It
+   decrypts the next session from the same client based on the "decrypt"
+   policy decision.
 
-   For the inbound session scenario, the TLS proxy is configured with a
-   copy of the local servers' certificate(s) and corresponding private
-   key(s).  Based on the server certificate presented, the TLS proxy
-   determines the corresponding private key, which again enables the TLS
-   proxy to gain visibility into further exchanges between the client
-   and server and hence decrypt subsequent network traffic.
+   For the inbound session scenario, the TLS proxy on middlebox is
+   configured with a copy of the local servers' certificate(s) and
+   corresponding private key(s).  Based on the server certificate
+   presented, the TLS proxy determines the corresponding private key,
+   which again enables the middlebox to gain visibility into further
+   exchanges between the client and server and hence decrypt subsequent
+   network traffic.
 
    To date, there are a number of use case scenarios that rely on the
    above capabilities when used with TLS 1.2 [RFC5246] or earlier.  TLS
@@ -192,7 +152,7 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    number of these use case scenarios from being satisfied with the
    types of TLS proxy based capabilities that exist today.
 
-   It has been noted, that currently deployed TLS proxies (middleboxes)
+   It has been noted, that currently deployed TLS proxies on middleboxes
    may reduce the security of the TLS connection itself due to a
    combination of poor implementation and configuration, and they may
    compromise privacy when decrypting a TLS session.  As such, it has
@@ -202,6 +162,14 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    instead.  We believe this is an overly constrained view of the
    problem that ignores a number of important real-life use case
    scenarios that improve the overall security posture.  We also note
+
+
+
+Andreasen, et al.       Expires December 17, 2018               [Page 3]
+
+Internet-Draft                     I-D                         June 2018
+
+
    that current endpoint-based TLS proxies suffer from many of the same
    security issues as the network-based TLS proxies do [HTTPSintercept].
 
@@ -219,19 +187,12 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    stimulate further discussion and explore possible solutions
    subsequently.
 
-
-
-Andreasen, et al.         Expires July 14, 2018                 [Page 4]
-
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
-
-
 1.1.  Requirements notation
 
-   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
-   "OPTIONAL" in this document are to be interpreted as described in RFC
-   2119, BCP 14 [RFC2119].
+   In this document, the key words "MUST", "MUST NOT", "REQUIRED",
+   "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY",
+   and "OPTIONAL" are to be interpreted as described in BCP 14, RFC 2119
+   [RFC2119].
 
 2.  TLS 1.3 Change Impact Overview
 
@@ -248,7 +209,7 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
 
    TLS 1.2 supports static RSA and Diffie-Hellman cipher suites, which
    enables the server's private key to be shared with server-side
-   middle-boxes.  TLS 1.3 has removed support for these cipher suites in
+   middleboxes.  TLS 1.3 has removed support for these cipher suites in
    favor of ephemeral mode Diffie-Hellman in order to provide perfect
    forward secrecy (PFS).  As a result of this, it is no longer possible
    for a server to share a key with the middlebox a priori, which in
@@ -257,6 +218,13 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
 
    Example scenarios that are impacted by this include network
    monitoring, troubleshooting, compliance, etc.
+
+
+
+Andreasen, et al.       Expires December 17, 2018               [Page 4]
+
+Internet-Draft                     I-D                         June 2018
+
 
    For further details (and a suggested solution), please refer to
    [I-D.green-tls-static-dh-in-tls13].
@@ -267,20 +235,11 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
 
    In TLS 1.2, the ClientHello message is sent to the server's transport
    address (IP and port).  The ClientHello message may include the
-   Server Name Indication (SNI) to specify the actual server the client
+   Server Name Indication (SNI) to specify the hostname the client
    wishes to contact.  This is useful when multiple "virtual servers"
    are hosted on a given transport address (IP and port).  It also
    provides information about the domain the client is attempting to
    reach.
-
-
-
-
-
-Andreasen, et al.         Expires July 14, 2018                 [Page 5]
-
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
-
 
    The server replies with a ServerHello message, which contains the
    selected connection parameters, followed by a Certificate message,
@@ -294,16 +253,34 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    responding is the one indicated in the SNI from the client.
 
    Example scenarios that are impacted by this involve selective network
-   security, such as whitelists or blacklists based on security
+   security policies, such as whitelists or blacklists based on security
    intelligence, regulatory requirements, categories (e.g. financial
    services), etc.  An added challenge is that some of these scenarios
-   require the middlebox to perform inspection, whereas other scenarios
-   require the middlebox to _not_ perform inspection.  Note that the use
-   cases cited here assume a conformant client and server that are not
-   actively trying to evade the middlebox inspection.  A non-conformant
-   client and server that collude can always evade middlebox inspection
-   if the middlebox policy is based on information provided by the
-   client or server, such as SNI or certificate.
+   require the middlebox to perform decryption and inspection, whereas
+   other scenarios require the middlebox to _not_ perform decryption or
+   inspection.  The middlebox is not able to make the policy decisions
+   without actively engaging in the TLS session from the beginning of
+   the handshake.
+
+   From a network infrastructure perspective, policies to validate SNI
+   against the Server Certificate can not be validated as the Server
+   certificate is now obscured to the middlebox.  Furthermore, policies
+   that may require richer information about the TLS Server obtained
+   from the Server certificate are also impacted as the certficate is
+   now encrypted.  These policies go to use cases where enterprises
+   require assurances that their devices are protected from non-
+   conforming servers.
+
+
+
+
+
+
+
+Andreasen, et al.       Expires December 17, 2018               [Page 5]
+
+Internet-Draft                     I-D                         June 2018
+
 
 2.2.2.  Resumption and Pre-Shared Key
 
@@ -330,14 +307,6 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    session resumption will not allow for fallback to a full handshake
    since the server may treat a ticket as valid for a shorter period of
    time that what is stated in the ticket_lifetime [I-D.ietf-tls-tls13].
-
-
-
-Andreasen, et al.         Expires July 14, 2018                 [Page 6]
-
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
-
-
    As long as the client advertises a supported DH group, the server (or
    middlebox) can always send a HelloRetryRequest to force the client to
    send a key_share and hence a full handshake.
@@ -346,64 +315,7 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    out of band) will of course not negotiate a new key, however that is
    not a change in TLS 1.3.
 
-2.2.3.  Ability to Disengage Middlebox Proxy
-
-   Network security middleboxes intercept or proxy TLS sessions for
-   acceptable use policy, protocol inspection, malware scanning and
-   other purposes.  For compliance and privacy reasons, middleboxes must
-   be able to engage and disengage the proxy function seamlessly without
-   affecting user experience.  For example, privacy laws may prohibit
-   middleboxes from intercepting banking traffic even if it is within
-   the enterprise network and outbound network traffic is subject to
-   inspection legally.
-
-   There are several techniques that can be utilized.  Those techniques
-   function with TLS 1.2 and earlier versions but not with TLS 1.3.
-
-   One technique is for the middlebox to negotiate the same master
-   secret with the original TLS client and server, as if the two
-   endpoints handshake directly.  This is also known as "Triple
-   Handshake" used by legitimate middleboxes.  [BreakTLS] describes the
-   methods with RSA and DH key exchanges.  When the proxy session keys
-   are the same as for a direct handshake, the middlebox is able to
-   "cut-through" the two TLS proxy sessions when it finishes the
-   security inspection.
-
-   This technique is not functional with TLS 1.3 since the transcript
-   hash over the handshake messages is part of the key derivation
-   procedure.
-
-   While technically a change in TLS 1.3, it must be noted, that the
-   "Triple Handshake" approach suffers from two problems.  First of all,
-   the technique used for the DH key exchange results in an insecure
-   Master Secret, and hence should never be used in practice (see
-   Section V-B in [BreakTLS]).  Secondly, the technique used with both
-   RSA and DH are known as an Unknown Key Share attack (UKS) against the
-   two endpoints, which ultimately can be the basis of real attacks on
-   TLS 1.2 itself.  To protect against UKS, RFC 7627 [RFC7627] defined
-   the TLS Session Hash and the Extended Master Secret for use with TLS
-   1.2 and earlier versions.
-
-   As noted in [BreakTLS], Elliptic Curve DH (ECDH) is in theory
-   suspectible to the same attack, however current TLS implementations
-
-
-
-Andreasen, et al.         Expires July 14, 2018                 [Page 7]
-
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
-
-
-   all support well-known named curves standardized by NIST, which would
-   prevent the attack (and hence use of the method).  As TLS 1.2
-   implementations increasingly adopt use of ECDH, this implies the
-   method is increasingly unlikely to work with TLS 1.2 anyway.
-
-   In summary, the above implies that in practice, the change in
-   transcript hash introduced in TLS 1.3 does not impact the ability to
-   disengage (or not) the middlebox compared to TLS 1.2.
-
-2.2.4.  Version Negotiation and Downgrade Protection
+2.2.3.  Version Negotiation and Downgrade Protection
 
    In TLS, the ClientHello message includes a list of supported protocol
    versions.  The server will select the highest supported version and
@@ -417,6 +329,15 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    TLS 1.3 is being negotiated, whereas a TLS 1.2 server will simply see
    a TLS 1.2 ClientHello and proceed with TLS 1.2 negotiation.
 
+
+
+
+
+Andreasen, et al.       Expires December 17, 2018               [Page 6]
+
+Internet-Draft                     I-D                         June 2018
+
+
    In TLS 1.3, the random value in the ServerHello message includes a
    special value in the last eight bytes when the server negotiates
    either TLS 1.2 or TLS 1.1 and below.  The special value(s) enable a
@@ -426,12 +347,11 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
 
    From a network security point of view, the primary impact is that TLS
    1.3 requires the TLS proxy to be an active man-in-the-middle from the
-   start of the handshake (as explained in Section 2.2.3).  However, a
-   middlebox that supports only TLS 1.2 may let the initial TLS 1.3
-   ClientHello proceed resulting in a TLS 1.3 ServerHello from the
-   server, which the middlebox does not support.  Depending on the
-   policy configured, the TLS proxy may reject the session at that
-   point.
+   start of the handshake.  However, a middlebox that supports only TLS
+   1.2 may let the initial TLS 1.3 ClientHello proceed resulting in a
+   TLS 1.3 ServerHello from the server, which the middlebox does not
+   support.  Depending on the policy configured, the TLS proxy may
+   reject the session at that point.
 
    If the TLS 1.2 middlebox takes on an active role in the handshake
    from the start, then the middlebox effectively proxies between a
@@ -441,16 +361,7 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    version to 1.2 in the ClientHellow, which would enable it to
    disengage from the handshake later.
 
-
-
-
-
-Andreasen, et al.         Expires July 14, 2018                 [Page 8]
-
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
-
-
-2.2.5.  SNI Encryption in TLS Through Tunneling
+2.2.4.  SNI Encryption in TLS Through Tunneling
 
    As noted above, with server certificates encrypted, the Server Name
    Indication (SNI) in the ClientHello message is the only information
@@ -474,6 +385,15 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    In this section we explain how a set of inbound real-life inbound use
    case scenarios are affected by some of the TLS 1.3 changes.
 
+
+
+
+
+Andreasen, et al.       Expires December 17, 2018               [Page 7]
+
+Internet-Draft                     I-D                         June 2018
+
+
 3.1.  Use Case I1 - Data Center Protection
 
    Services deployed in the data center may be offered for access by
@@ -493,18 +413,6 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
 
    For additional considerations on this scenario, see also
    [I-D.green-tls-static-dh-in-tls13].
-
-
-
-
-
-
-
-
-Andreasen, et al.         Expires July 14, 2018                 [Page 9]
-
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
-
 
 3.2.  Use Case I2 - Application Operation over NAT
 
@@ -534,6 +442,14 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    compliance must provide the ability to regularly monitor the network
    to prevent, detect and minimize impact of a data compromise.
    [PCI-DSS] Requirement #2 (and Appendix A2 as it concerns TLS)
+
+
+
+Andreasen, et al.       Expires December 17, 2018               [Page 8]
+
+Internet-Draft                     I-D                         June 2018
+
+
    describes the need to be able to detect protocol and protocol usage
    correctness.  Further, [PCI-DSS] Requirement #10 detailing monitoring
    capabilities also describe the need to provide network-based audit to
@@ -553,15 +469,6 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    signed certificates, black or white-list Certificate Authority, etc.
    In TLS 1.2, the Certificate message was sent in clear-text, however
    in TLS 1.3 the message is encrypted thereby preventing either a
-
-
-
-
-Andreasen, et al.         Expires July 14, 2018                [Page 10]
-
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
-
-
    network-based audit or policy enforcement around acceptable server
    certificates.
 
@@ -589,6 +496,16 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    o  "Employees are not allowed to access 'gaming' websites from
       enterprise network"
 
+
+
+
+
+
+Andreasen, et al.       Expires December 17, 2018               [Page 9]
+
+Internet-Draft                     I-D                         June 2018
+
+
    o  "Temporary workers are not allowed to use enterprise network to
       upload video clips to Internet, but are allowed to watch video
       clips"
@@ -607,16 +524,6 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
 
    The cut-through action is possible with up to TLS 1.2 but will not
    work with TLS 1.3.
-
-
-
-
-
-
-Andreasen, et al.         Expires July 14, 2018                [Page 11]
-
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
-
 
 4.2.  Use Case O2 - Malware and Threat Protection
 
@@ -647,6 +554,14 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
 
    o  Constrained devices with limited resources (CPU, memory, etc.)
 
+
+
+
+Andreasen, et al.       Expires December 17, 2018              [Page 10]
+
+Internet-Draft                     I-D                         June 2018
+
+
    o  Lack of ability to install and update endpoint protection
       software.
 
@@ -666,13 +581,6 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    reaction to security vulnerabilities, the reality is that a very
    large number of endpoints continue to run versions of software with
    known vulnerabilities.
-
-
-
-Andreasen, et al.         Expires July 14, 2018                [Page 12]
-
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
-
 
    In theory, these endpoints should of course be patched, but in
    practice, it is often not done which leaves the endpoint open to the
@@ -702,6 +610,14 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    at all times, since it must engage during the ClientHello and cannot
    disengage subsequently.
 
+
+
+
+Andreasen, et al.       Expires December 17, 2018              [Page 11]
+
+Internet-Draft                     I-D                         June 2018
+
+
 4.6.  Use Case O6 - End-of-Life Endpoint
 
    Older endpoints (and in some cases even new ones) will not receive
@@ -720,15 +636,6 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
 
    Again, the only way to satisfy the use case scenario around network-
    based audit is for the middlebox to always become an active MITM.
-
-
-
-
-
-Andreasen, et al.         Expires July 14, 2018                [Page 13]
-
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
-
 
 4.8.  Use Case O8 - Crypto Security Audit
 
@@ -756,6 +663,17 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
    This document describes existing functionality and use case scenarios
    and as such does not introduce any new security considerations.
 
+
+
+
+
+
+
+Andreasen, et al.       Expires December 17, 2018              [Page 12]
+
+Internet-Draft                     I-D                         June 2018
+
+
 7.  Acknowledgements
 
    Eric Rescorla provided several comments on technical accuracy and
@@ -773,18 +691,8 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
 
    [I-D.ietf-tls-tls13]
               Rescorla, E., "The Transport Layer Security (TLS) Protocol
-              Version 1.3", draft-ietf-tls-tls13-23 (work in progress),
-              January 2018.
-
-
-
-
-
-
-Andreasen, et al.         Expires July 14, 2018                [Page 14]
-
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
-
+              Version 1.3", draft-ietf-tls-tls13-28 (work in progress),
+              March 2018.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -798,17 +706,8 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
 
 9.2.  Informative References
 
-   [BreakTLS]
-              Bhargavan, K., Delignat-Lavaud, A., Fournet, C., Pironti,
-              A., and P. Strub, "Triple Handshakes and Cookie Cutters:
-              Breaking and Fixing Authentication over TLS", IEEE
-              Symposium on Security and Privacy , 2014.
-
    [HTTPSintercept]
-              Durumeric, Z., Ma, Z., Springall, D., Barnes, R.,
-              Sullivan, N., Bursztein, E., Mailey, M., Halderman, J.,
-              and V. Paxson, "The Security Impact of HTTPS
-              Interception", February 2017,
+              "The Security Impact of HTTPS Interception", n.d.,
               <https://jhalderm.com/pub/papers/interception-ndss17.pdf>.
 
    [I-D.green-tls-static-dh-in-tls13]
@@ -818,9 +717,18 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
               progress), July 2017.
 
    [I-D.ietf-tls-sni-encryption]
-              Huitema, C. and E. Rescorla, "SNI Encryption in TLS
-              Through Tunneling", draft-ietf-tls-sni-encryption-00 (work
-              in progress), August 2017.
+              Huitema, C. and E. Rescorla, "Issues and Requirements for
+              SNI Encryption in TLS", draft-ietf-tls-sni-encryption-03
+              (work in progress), May 2018.
+
+
+
+
+
+Andreasen, et al.       Expires December 17, 2018              [Page 13]
+
+Internet-Draft                     I-D                         June 2018
+
 
    [NERCCIP]  "North American Electric Reliability Corporation, (CIP)
               Critical Infrastructure Protection", n.d.,
@@ -828,19 +736,8 @@ Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
               itedStates.aspx?jurisdiction=United%20States>.
 
    [PCI-DSS]  "Payment Card Industry (PCI): Data Security Standard",
-              April 2016,
-              <https://www.pcisecuritystandards.org/documents/
+              n.d., <https://www.pcisecuritystandards.org/documents/
               PCI_DSS_v3-2.pdf>.
-
-
-
-
-
-
-Andreasen, et al.         Expires July 14, 2018                [Page 15]
-
-Internet-Draft  TLS 1.3 Impact on Network-Based Security    January 2018
-
 
    [RFC5077]  Salowey, J., Zhou, H., Eronen, P., and H. Tschofenig,
               "Transport Layer Security (TLS) Session Resumption without
@@ -861,7 +758,7 @@ Authors' Addresses
    Iselin, NJ  08830
    USA
 
-   EMail: fandreas@cisco.com
+   Email: fandreas@cisco.com
 
 
    Nancy Cam-Winget
@@ -870,7 +767,7 @@ Authors' Addresses
    San Jose, CA  95134
    USA
 
-   EMail: ncamwing@cisco.com
+   Email: ncamwing@cisco.com
 
 
    Eric Wang
@@ -879,18 +776,9 @@ Authors' Addresses
    San Jose, CA  95134
    USA
 
-   EMail: ejwang@cisco.com
+   Email: ejwang@cisco.com
 
 
 
 
-
-
-
-
-
-
-
-
-
-Andreasen, et al.         Expires July 14, 2018                [Page 16]
+Andreasen, et al.       Expires December 17, 2018              [Page 14]
