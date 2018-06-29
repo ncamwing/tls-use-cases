@@ -2,7 +2,7 @@
 title: TLS 1.3 Impact on Network-Based Security
 abbrev: I-D
 docname: draft-camwinget-tls-use-cases-02
-date: 2018-06-15
+date:
 category: info
 ipr: trust200902
 
@@ -135,7 +135,7 @@ From a network infrastructure perspective,  policies to validate SNI against the
 These policies go to use cases where enterprises require assurances that their devices are protected from non-conforming servers.
 {:/comment}
 
-
+{::comment}
 ###Resumption and Pre-Shared Key
 In TLS 1.2 and below, session resumption is provided by "session IDs" and "session tickets" {{RFC5077}}. If the server does not want to honor a ticket, then it can simply initiate a full TLS handshake with the client as usual.
 
@@ -147,6 +147,7 @@ Example scenarios that are impacted by this are middleboxes that were not part o
 Note that in practice though, it is unlikely that clients using session resumption will not allow for fallback to a full handshake since the server may treat a ticket as valid for a shorter period of time that what is stated in the ticket_lifetime {{I-D.ietf-tls-tls13}}. As long as the client advertises a supported DH group, the server (or middlebox) can always send a HelloRetryRequest to force the client to send a key_share and hence a full handshake.
 
 Clients that truly only support PSK mode of operation (provisioned out of band) will of course not negotiate a new key, however that is not a change in TLS 1.3.
+{:/comment}
 
 
 ###Version Negotiation and Downgrade Protection

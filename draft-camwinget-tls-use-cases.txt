@@ -5,8 +5,8 @@
 Network Working Group                                       F. Andreasen
 Internet-Draft                                             N. Cam-Winget
 Intended status: Informational                                   E. Wang
-Expires: December 17, 2018                                 Cisco Systems
-                                                           June 15, 2018
+Expires: December 31, 2018                                 Cisco Systems
+                                                           June 29, 2018
 
 
                 TLS 1.3 Impact on Network-Based Security
@@ -42,7 +42,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 17, 2018.
+   This Internet-Draft will expire on December 31, 2018.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Andreasen, et al.       Expires December 17, 2018               [Page 1]
+Andreasen, et al.       Expires December 31, 2018               [Page 1]
 
 Internet-Draft                     I-D                         June 2018
 
@@ -109,7 +109,7 @@ Internet-Draft                     I-D                         June 2018
 
 
 
-Andreasen, et al.       Expires December 17, 2018               [Page 2]
+Andreasen, et al.       Expires December 31, 2018               [Page 2]
 
 Internet-Draft                     I-D                         June 2018
 
@@ -128,17 +128,17 @@ Internet-Draft                     I-D                         June 2018
    the network security device (hereafter referred to as a middlebox)
    makes a policy decision on the current TLS session.  The policy
    decision could be pass-through, decrypt, deny, etc.  On a "decrypt"
-   policy action, the middlebox invokes TLS proxy to modify the
-   certificate provided by the (outside) server and (re)signs it with
-   the private key from the local root certificate.  From here on, the
-   middlebox has visibility into further exchanges between the client
-   and server which enables it to decrypt and inspect subsequent network
-   traffic.  Alternatively, the middlebox may allow the current session
-   to pass through if it starts in a passive monitoing mode.  It
-   decrypts the next session from the same client based on the "decrypt"
-   policy decision.
+   policy action, the middlebox becomes a TLS proxy for this TLS
+   session.  It modifies the certificate provided by the (outside)
+   server and (re)signs it with the private key from the local root
+   certificate.  From here on, the middlebox has visibility into further
+   exchanges between the client and server which enables it to decrypt
+   and inspect subsequent network traffic.  Alternatively, based on
+   policy, the middlebox may allow the current session to pass through
+   if the session starts in monitoring mode, and then decrypt the next
+   session from the same client.
 
-   For the inbound session scenario, the TLS proxy on middlebox is
+   For the inbound session scenario, the TLS proxy on the middlebox is
    configured with a copy of the local servers' certificate(s) and
    corresponding private key(s).  Based on the server certificate
    presented, the TLS proxy determines the corresponding private key,
@@ -165,7 +165,7 @@ Internet-Draft                     I-D                         June 2018
 
 
 
-Andreasen, et al.       Expires December 17, 2018               [Page 3]
+Andreasen, et al.       Expires December 31, 2018               [Page 3]
 
 Internet-Draft                     I-D                         June 2018
 
@@ -174,12 +174,10 @@ Internet-Draft                     I-D                         June 2018
    security issues as the network-based TLS proxies do [HTTPSintercept].
 
    The purpose of this document is to provide a representative set of
-   _network based security_ use case scenarios that are negatively
-   impacted by TLS 1.3 and do not lend themselves to an endpoint-based
-   alternative solution.  For each use case scenario, we highlight the
-   specific aspect(s) of TLS 1.3 that makes the use case problematic
-   with a TLS proxy based solution and we explain why an endpoint-based
-   only solution is not considered acceptable.
+   _network based security_ use case scenarios that are impacted by TLS
+   1.3.  For each use case scenario, we highlight the specific aspect(s)
+   of TLS 1.3 that may make the use case problematic with a TLS proxy
+   based solution.
 
    It should be noted that this document addresses only _security_ use
    cases with a focus on identifying the problematic ones.  The document
@@ -221,7 +219,9 @@ Internet-Draft                     I-D                         June 2018
 
 
 
-Andreasen, et al.       Expires December 17, 2018               [Page 4]
+
+
+Andreasen, et al.       Expires December 31, 2018               [Page 4]
 
 Internet-Draft                     I-D                         June 2018
 
@@ -233,7 +233,7 @@ Internet-Draft                     I-D                         June 2018
 
 2.2.1.  Encrypted Server Certificate
 
-   In TLS 1.2, the ClientHello message is sent to the server's transport
+   In TLS, the ClientHello message is sent to the server's transport
    address (IP and port).  The ClientHello message may include the
    Server Name Indication (SNI) to specify the hostname the client
    wishes to contact.  This is useful when multiple "virtual servers"
@@ -269,53 +269,18 @@ Internet-Draft                     I-D                         June 2018
    from the Server certificate are also impacted as the certficate is
    now encrypted.
 
-2.2.2.  Resumption and Pre-Shared Key
-
-   In TLS 1.2 and below, session resumption is provided by "session IDs"
-   and "session tickets" [RFC5077].  If the server does not want to
-
-
-
-
-Andreasen, et al.       Expires December 17, 2018               [Page 5]
-
-Internet-Draft                     I-D                         June 2018
-
-
-   honor a ticket, then it can simply initiate a full TLS handshake with
-   the client as usual.
-
-   In TLS 1.3, the above mechanism is replaced by Pre-Shared Keys (PSK),
-   which can be negotiated as part of an initial handshake and then used
-   in a subsequent handshake to perform resumption using the PSK.  TLS
-   1.3 states that the client SHOULD include a "key_share" extension to
-   enable the server to decline resumption and fall back to a full
-   handshake, however it is not an absolute requirement.
-
-   Example scenarios that are impacted by this are middleboxes that were
-   not part of the initial handshake, and hence do not know the PSK.  If
-   the client does not include the "key_share" extension, the middlebox
-   cannot force a fallback to the full handshake.  If the middlebox
-   policy requires it to inspect the session, it will have to fail the
-   connection instead.
-
-   Note that in practice though, it is unlikely that clients using
-   session resumption will not allow for fallback to a full handshake
-   since the server may treat a ticket as valid for a shorter period of
-   time that what is stated in the ticket_lifetime [I-D.ietf-tls-tls13].
-   As long as the client advertises a supported DH group, the server (or
-   middlebox) can always send a HelloRetryRequest to force the client to
-   send a key_share and hence a full handshake.
-
-   Clients that truly only support PSK mode of operation (provisioned
-   out of band) will of course not negotiate a new key, however that is
-   not a change in TLS 1.3.
-
-2.2.3.  Version Negotiation and Downgrade Protection
+2.2.2.  Version Negotiation and Downgrade Protection
 
    In TLS, the ClientHello message includes a list of supported protocol
    versions.  The server will select the highest supported version and
    indicate its choice in the ServerHello message.
+
+
+
+Andreasen, et al.       Expires December 31, 2018               [Page 5]
+
+Internet-Draft                     I-D                         June 2018
+
 
    TLS 1.3 changes the way in which version negotiation is performed.
    The ClientHello message will indicate TLS version 1.3 in the new
@@ -329,35 +294,16 @@ Internet-Draft                     I-D                         June 2018
    special value in the last eight bytes when the server negotiates
    either TLS 1.2 or TLS 1.1 and below.  The special value(s) enable a
    TLS 1.3 client to detect an active attacker launching a downgrade
-
-
-
-
-Andreasen, et al.       Expires December 17, 2018               [Page 6]
-
-Internet-Draft                     I-D                         June 2018
-
-
    attack when the client did indeed reach a TLS 1.3 server, provided
    ephemeral ciphers are being used.
 
    From a network security point of view, the primary impact is that TLS
    1.3 requires the TLS proxy to be an active man-in-the-middle from the
-   start of the handshake.  However, a middlebox that supports only TLS
-   1.2 may let the initial TLS 1.3 ClientHello proceed resulting in a
-   TLS 1.3 ServerHello from the server, which the middlebox does not
-   support.  Depending on the policy configured, the TLS proxy may
-   reject the session at that point.
+   start of the handshake.  It is also required that a TLS 1.2 and below
+   middlebox implementation must handle unsupported extensions
+   gracefully, which is a requirement for a conformant middlebox.
 
-   If the TLS 1.2 middlebox takes on an active role in the handshake
-   from the start, then the middlebox effectively proxies between a
-   client-to-middlebox and a middlebox-to-server TLS connection, in
-   which case the handshake succeeds (but as TLS 1.2).  Note that due to
-   downgrade protection, the proxy cannot simply downgrade the TLS
-   version to 1.2 in the ClientHellow, which would enable it to
-   disengage from the handshake later.
-
-2.2.4.  SNI Encryption in TLS Through Tunneling
+2.2.3.  SNI Encryption in TLS Through Tunneling
 
    As noted above, with server certificates encrypted, the Server Name
    Indication (SNI) in the ClientHello message is the only information
@@ -381,19 +327,22 @@ Internet-Draft                     I-D                         June 2018
    In this section we explain how a set of inbound real-life inbound use
    case scenarios are affected by some of the TLS 1.3 changes.
 
+
+
+
+
+
+
+Andreasen, et al.       Expires December 31, 2018               [Page 6]
+
+Internet-Draft                     I-D                         June 2018
+
+
 3.1.  Use Case I1 - Data Center Protection
 
    Services deployed in the data center may be offered for access by
    external and untrusted hosts.  Network security functions such as IPS
    and Web Application Firewall (WAF) are deployed to monitor and
-
-
-
-Andreasen, et al.       Expires December 17, 2018               [Page 7]
-
-Internet-Draft                     I-D                         June 2018
-
-
    control the transactions to these services.  While an Application
    level load balancer is not a security function strictly speaking, it
    is also an important function that resides in front of these services
@@ -424,11 +373,6 @@ Internet-Draft                     I-D                         June 2018
    The embedded address and port correction operation requires access to
    the L7 payload which could be protected by encryption.
 
-   While TLS 1.3 will not prevent the middlebox from performing this
-   function, once a proxy function is established, the middlebox is not
-   able to remove itself from the packet path for the particular
-   session.
-
 3.3.  Use Case I3 - Compliance
 
    Many regulations exist today that include cyber security requirements
@@ -445,7 +389,7 @@ Internet-Draft                     I-D                         June 2018
 
 
 
-Andreasen, et al.       Expires December 17, 2018               [Page 8]
+Andreasen, et al.       Expires December 31, 2018               [Page 7]
 
 Internet-Draft                     I-D                         June 2018
 
@@ -475,8 +419,9 @@ Internet-Draft                     I-D                         June 2018
 
 4.  Outbound Session Use Cases
 
-   In this section we explain how a set of real-life outbound session
-   use case scenarios are affected by some of the TLS 1.3 changes.
+   In this section we explain a set of real-life outbound session use
+   case scenarios.  These scenarios remain functional with TLS 1.3
+   though the performance is impacted by the additional crypto loads.
 
 4.1.  Use Case O1 - Acceptable Use Policy (AUP)
 
@@ -497,26 +442,21 @@ Internet-Draft                     I-D                         June 2018
 
    Such enforcements are accomplished by controlling the DNS
    transactions and HTTP transactions.  A coarse control is achieved by
-   controlling the DNS response (which itself may be protected by TLS),
 
 
 
-Andreasen, et al.       Expires December 17, 2018               [Page 9]
+Andreasen, et al.       Expires December 31, 2018               [Page 8]
 
 Internet-Draft                     I-D                         June 2018
 
 
+   controlling the DNS response (which itself may be protected by TLS),
    however, in many cases, granular control is required at HTTP URL or
    Method levels, to distinguish a specific web page on a hosting site,
    or to differentiate between uploading and downloading operations.
 
    The security device requires access to plain text HTTP header for
-   granular AUP control.  For traffic passing the AUP check, the
-   middlebox is also required to cut through the rest of the traffic
-   without decryption, for performance and privacy reasons.
-
-   The cut-through action is possible with up to TLS 1.2 but will not
-   work with TLS 1.3.
+   granular AUP control.
 
 4.2.  Use Case O2 - Malware and Threat Protection
 
@@ -535,9 +475,7 @@ Internet-Draft                     I-D                         June 2018
    signatures to 0-day analysis.
 
    The security functions require access to clear text HTTP or other
-   application level streams on a needed basis.  After a successful scan
-   the traffic should be allowed to flow through without being decrypted
-   continuously.  This is not possible with TLS 1.3.
+   application level streams on a needed basis.
 
 4.3.  Use Case O3 - IoT Endpoints
 
@@ -554,18 +492,19 @@ Internet-Draft                     I-D                         June 2018
 
    In short, the security posture of such devices is expected to be
    weak, especially as they get older, and the only way to improve this
+   posture is to supplement them with a network-based solution.  This in
+   turn requires a MITM.
 
 
 
-Andreasen, et al.       Expires December 17, 2018              [Page 10]
+
+
+
+
+Andreasen, et al.       Expires December 31, 2018               [Page 9]
 
 Internet-Draft                     I-D                         June 2018
 
-
-   posture is to supplement them with a network-based solution.  This in
-   turn requires a MITM, and with TLS 1.3, this implies the MITM must be
-   present at all times since the TLS 1.3 proxy must engage during the
-   ClientHello and cannot disengage subsequently.
 
 4.4.  Use Case O4 - Unpatched Endpoints
 
@@ -581,10 +520,6 @@ Internet-Draft                     I-D                         June 2018
    look for attempted exploits of such vulnerabilities and stop them
    before they reach the unpatched endpoint.
 
-   With TLS 1.3, the network-based security solution must act as a MITM
-   at all times, since it must engage during the ClientHello and cannot
-   disengage subsequently.
-
 4.5.  Use Case O5 - Rapid Containment of New Vulnerability and Campaigns
 
    When a new vulnerability is discovered or an attack campaign is
@@ -599,37 +534,19 @@ Internet-Draft                     I-D                         June 2018
    on security intelligence related to the campaign and stop them before
    they reach the vulnerable endpoint.
 
-   With TLS 1.3, the network-based security solution must act as a MITM
-   at all times, since it must engage during the ClientHello and cannot
-   disengage subsequently.
-
 4.6.  Use Case O6 - End-of-Life Endpoint
 
    Older endpoints (and in some cases even new ones) will not receive
    any software updates.  As new vulnerabilities inevitably are
    discovered, these endpoints will be vulnerable to exploits.
 
-
-
-
-
-Andreasen, et al.       Expires December 17, 2018              [Page 11]
-
-Internet-Draft                     I-D                         June 2018
-
-
-   A network-based security solution can help prevent such exploits.
-   With TLS 1.3, the network-based security solution must act as a MITM
-   at all times, since it must engage during the ClientHello and cannot
-   disengage subsequently.
+   A network-based security solution can help prevent such exploits with
+   the MITM functions.
 
 4.7.  Use Case O7 - Compliance
 
    This use case is similar to the inbound compliance use case described
    in Section 3.3, except its from the client point of view.
-
-   Again, the only way to satisfy the use case scenario around network-
-   based audit is for the middlebox to always become an active MITM.
 
 4.8.  Use Case O8 - Crypto Security Audit
 
@@ -637,6 +554,14 @@ Internet-Draft                     I-D                         June 2018
 
    Organizations may have policies around acceptable ciphers and
    certificates for client sessions, possibly based on the destination.
+
+
+
+Andreasen, et al.       Expires December 31, 2018              [Page 10]
+
+Internet-Draft                     I-D                         June 2018
+
+
    Examples include no use of self-signed certificates, black or white-
    list Certificate Authority, etc.  In TLS 1.2, the Certificate message
    was sent in clear-text, however in TLS 1.3 the message is encrypted
@@ -662,18 +587,6 @@ Internet-Draft                     I-D                         June 2018
    Eric Rescorla provided several comments on technical accuracy and
    middlebox security implications.
 
-
-
-
-
-
-
-
-Andreasen, et al.       Expires December 17, 2018              [Page 12]
-
-Internet-Draft                     I-D                         June 2018
-
-
 8.  Change Log
 
 8.1.  Version -01
@@ -693,6 +606,17 @@ Internet-Draft                     I-D                         June 2018
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
+
+
+
+
+
+
+
+Andreasen, et al.       Expires December 31, 2018              [Page 11]
+
+Internet-Draft                     I-D                         June 2018
+
 
    [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
               (TLS) Protocol Version 1.2", RFC 5246,
@@ -721,15 +645,6 @@ Internet-Draft                     I-D                         June 2018
               <http://www.nerc.com/pa/stand/Pages/ReliabilityStandardsUn
               itedStates.aspx?jurisdiction=United%20States>.
 
-
-
-
-
-Andreasen, et al.       Expires December 17, 2018              [Page 13]
-
-Internet-Draft                     I-D                         June 2018
-
-
    [PCI-DSS]  "Payment Card Industry (PCI): Data Security Standard",
               n.d., <https://www.pcisecuritystandards.org/documents/
               PCI_DSS_v3-2.pdf>.
@@ -746,6 +661,18 @@ Internet-Draft                     I-D                         June 2018
               <https://www.rfc-editor.org/info/rfc7627>.
 
 Authors' Addresses
+
+
+
+
+
+
+
+
+Andreasen, et al.       Expires December 31, 2018              [Page 12]
+
+Internet-Draft                     I-D                         June 2018
+
 
    Flemming Andreasen
    Cisco Systems
@@ -781,4 +708,21 @@ Authors' Addresses
 
 
 
-Andreasen, et al.       Expires December 17, 2018              [Page 14]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Andreasen, et al.       Expires December 31, 2018              [Page 13]
