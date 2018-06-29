@@ -87,7 +87,7 @@ To date, there are a number of use case scenarios that rely on the above capabil
 
 It has been noted, that currently deployed TLS proxies on middleboxes may reduce the security of the TLS connection itself due to a combination of poor implementation and configuration, and they may compromise privacy when decrypting a TLS session. As such, it has been argued that preventing TLS proxies from working should be viewed as a feature of TLS 1.3 and that the proper way of solving these issues is to rely on endpoint (client and server) based solutions instead. We believe this is an overly constrained view of the problem that ignores a number of important real-life use case scenarios that improve the overall security posture. We also note that current endpoint-based TLS proxies suffer from many of the same security issues as the network-based TLS proxies do {{HTTPSintercept}}.
 
-The purpose of this document is to provide a representative set of *network based security* use case scenarios that are negatively impacted by TLS 1.3 and do not lend themselves to an endpoint-based alternative solution. For each use case scenario, we highlight the specific aspect(s) of TLS 1.3 that makes the use case problematic with a TLS proxy based solution and we explain why an endpoint-based only solution is not considered acceptable.
+The purpose of this document is to provide a representative set of *network based security* use case scenarios that are impacted by TLS 1.3. For each use case scenario, we highlight the specific aspect(s) of TLS 1.3 that may make the use case problematic with a TLS proxy based solution.  We also raise the attention to potential non-conformant implementations in certain TLS proxy that used to work with TLS 1.2 but will not with TLS 1.3.
 
 It should be noted that this document addresses only *security* use cases with a focus on identifying the problematic ones. The document does not offer specific solutions to these as the goal is to stimulate further discussion and explore possible solutions subsequently.
 
@@ -121,7 +121,7 @@ For further details (and a suggested solution), please refer to {{I-D.green-tls-
 
 
 ###Encrypted Server Certificate
-In TLS 1.2, the ClientHello message is sent to the server's transport address (IP and port). The ClientHello message may include the Server Name Indication (SNI) to specify the hostname the client wishes to contact. This is useful when multiple "virtual servers" are hosted on a given transport address (IP and port). It also provides information about the domain the client is attempting to reach.
+In TLS, the ClientHello message is sent to the server's transport address (IP and port). The ClientHello message may include the Server Name Indication (SNI) to specify the hostname the client wishes to contact. This is useful when multiple "virtual servers" are hosted on a given transport address (IP and port). It also provides information about the domain the client is attempting to reach.
 
 The server replies with a ServerHello message, which contains the selected connection parameters, followed by a Certificate message, which contains the server's certificate and hence its identity.
 
@@ -156,13 +156,13 @@ TLS 1.3 changes the way in which version negotiation is performed. The ClientHel
 
 In TLS 1.3, the random value in the ServerHello message includes a special value in the last eight bytes when the server negotiates either TLS 1.2 or TLS 1.1 and below. The special value(s) enable a TLS 1.3 client to detect an active attacker launching a downgrade attack when the client did indeed reach a TLS 1.3 server, provided ephemeral ciphers are being used.
 
-From a network security point of view, the primary impact is that TLS 1.3 requires the TLS proxy to be an active man-in-the-middle from the start of the handshake. However, a middlebox that supports only TLS 1.2 may let the initial TLS 1.3 ClientHello proceed resulting in a TLS 1.3 ServerHello from the server, which the middlebox does not support. Depending on the policy configured, the TLS proxy may reject the session at that point.
-
-If the TLS 1.2 middlebox takes on an active role in the handshake from the start, then the middlebox effectively proxies between a client-to-middlebox and a middlebox-to-server TLS connection, in which case the handshake succeeds (but as TLS 1.2). Note that due to downgrade protection, the proxy cannot simply downgrade the TLS version to 1.2 in the ClientHellow, which would enable it to disengage from the handshake later.
+From a network security point of view, the primary impact is that TLS 1.3 requires the TLS proxy to be an active man-in-the-middle from the start of the handshake. It is also required that a TLS 1.2 and below middlebox implementation must handle unsupported extensions gracefully, which is a requirement for a conformant middlebox.
 
 
 {::comment}
 *[Editor's note: I'm not sure there is really any new middlebox issue here, but maybe I missed something]*
+
+*[Editor's note: The "active" "from the start of the handshake" requirement also applies to DHE.  Essentially it is a basic requirement for TLS proxy]*
 
 ###1-RTT Handshake
 *[Editor's note: This is essentially the resumption scenario with PSK (with optional fallback to the full handshake) - I don't believe there are any other issues here]*
@@ -201,9 +201,6 @@ Without the correction, the secondary data (FTP) or media (SIP) connections will
 
 The embedded address and port correction operation requires access to the L7 payload which could be protected by encryption.
 
-While TLS 1.3 will not prevent the middlebox from performing this function, once a proxy function is established, the middlebox is not able to remove itself from the packet path for the particular session.
-
-
 ## Use Case I3 - Compliance {#InboundCompliance}
 Many regulations exist today that include cyber security requirements requiring close inspection of the information traversing through the network.  For example, organizations that require PCI-DSS {{PCI-DSS}}
 compliance must provide the ability to regularly monitor the network to prevent, detect and minimize impact of a data compromise.  {{PCI-DSS}} Requirement #2 (and Appendix A2 as it concerns TLS) describes the need to be able to detect protocol and protocol usage correctness. Further, {{PCI-DSS}} Requirement #10 detailing monitoring capabilities also describe the need to provide network-based audit to ensure that the protocols and configurations are properly used.
@@ -218,7 +215,7 @@ While the audits and policy enforcements could in theory be done on the servers 
 
 
 # Outbound Session Use Cases
-In this section we explain how a set of real-life outbound session use case scenarios are affected by some of the TLS 1.3 changes.
+In this section we explain a set of real-life outbound session use case scenarios. These scenarios remain functional with TLS 1.3 though the performance is impacted by the additional crypto loads.
 
 ## Use Case O1 - Acceptable Use Policy (AUP)
 Enterprises deploy security devices to enforce Acceptable Use Policy (AUP) according to the IT and workplace policies. The security devices, such as firewall/next-gen firewall, web proxy and an application on the endpoints, act as middleboxes to scan traffic in the enterprise network for policy enforcement.
@@ -230,9 +227,7 @@ Sample AUP policies are:
 
 Such enforcements are accomplished by controlling the DNS transactions and HTTP transactions.  A coarse control is achieved by controlling the DNS response (which itself may be protected by TLS), however, in many cases, granular control is required at HTTP URL or Method levels, to distinguish a specific web page on a hosting site, or to differentiate between uploading and downloading operations.
 
-The security device requires access to plain text HTTP header for granular AUP control. For traffic passing the AUP check, the middlebox is also required to cut through the rest of the traffic without decryption, for performance and privacy reasons.
-
-The cut-through action is possible with up to TLS 1.2 but will not work with TLS 1.3.
+The security device requires access to plain text HTTP header for granular AUP control.
 
 {::comment}
 *[Flemming: I think we need to clarify why you can't just do this at the endpoint instead]*
@@ -250,7 +245,7 @@ While an endpoint application based solution may be effective in protecting from
 
 The network based solutions comprise security devices and applications that scan network traffic for the purpose from malware signatures to 0-day analysis.
 
-The security functions require access to clear text HTTP or other application level streams on a needed basis. After a successful scan the traffic should be allowed to flow through without being decrypted continuously. This is not possible with TLS 1.3.
+The security functions require access to clear text HTTP or other application level streams on a needed basis.
 
 
 {::comment}
@@ -268,7 +263,7 @@ As the Internet of Everything continues to evolve, more and more endpoints becom
 * Lack of ability to install and update endpoint protection software.
 * Lack of software updates as new vulnerabilities are discovered.
 
-In short, the security posture of such devices is expected to be weak, especially as they get older, and the only way to improve this posture is to supplement them with a network-based solution. This in turn requires a MITM, and with TLS 1.3, this implies the MITM must be present at all times since the TLS 1.3 proxy must engage during the ClientHello and cannot disengage subsequently.
+In short, the security posture of such devices is expected to be weak, especially as they get older, and the only way to improve this posture is to supplement them with a network-based solution. This in turn requires a MITM.
 
 
 ## Use Case O4 - Unpatched Endpoints
@@ -276,26 +271,18 @@ New vulnerabilities appear constantly and in spite of many advances in recent ye
 
 In theory, these endpoints should of course be patched, but in practice, it is often not done which leaves the endpoint open to the vulnerability in question. A network-based security solution can look for attempted exploits of such vulnerabilities and stop them before they reach the unpatched endpoint.
 
-With TLS 1.3, the network-based security solution must act as a MITM at all times, since it must engage during the ClientHello and cannot disengage subsequently.
-
-
 ## Use Case O5 - Rapid Containment of New Vulnerability and Campaigns
 When a new vulnerability is discovered or an attack campaign is launched, it is important to patch the vulnerability or contain the campaign as quickly as possible. Patches however are not always available immediately, and even when they are, most endpoints are in practice not patched immediately, which leaves them open to the attack.
 
 A network-based security solution can look for attempted exploits of such new vulnerabilities or recognize an attack being launched based on security intelligence related to the campaign and stop them before they reach the vulnerable endpoint.
 
-With TLS 1.3, the network-based security solution must act as a MITM at all times, since it must engage during the ClientHello and cannot disengage subsequently.
-
 ## Use Case O6 - End-of-Life Endpoint
 Older endpoints (and in some cases even new ones) will not receive any software updates. As new vulnerabilities inevitably are discovered, these endpoints will be vulnerable to exploits.
 
-A network-based security solution can help prevent such exploits. With TLS 1.3, the network-based security solution must act as a MITM at all times, since it must engage during the ClientHello and cannot disengage subsequently.
+A network-based security solution can help prevent such exploits with the MITM functions.
 
 ## Use Case O7 - Compliance
 This use case is similar to the inbound compliance use case described in {{InboundCompliance}}, except its from the client point of view.
-
-Again, the only way to satisfy the use case scenario around network-based audit is for the middlebox to always become an active MITM.
-
 
 ## Use Case O8 - Crypto Security Audit
 This is a variation of the use case in {{InboundCryptoSecurityAudit}}.
