@@ -90,15 +90,15 @@
   <t>Inbound Session, where the TLS session originates from a client outside the perimeter towards an entity on the inside</t>
 </list></t>
 
-<t>For the outbound session scenario, MITM is enabled by generating a local root certificate and an accompanying (local) public/private key pair. The local root certificate is installed on the inside entities for which TLS traffic is to be inspected, and the network security device(s) store a copy of the private key. During the TLS handshake, the network security device (hereafter referred to as a middlebox) makes a policy decision on the current TLS session. The policy decision could be pass-through, decrypt, deny, etc. On a “decrypt” policy action, the middlebox invokes TLS proxy to modify the certificate provided by the (outside) server and (re)signs it with the private key from the local root certificate. From here on, the middlebox has visibility into further exchanges between the client and server which enables it to decrypt and inspect subsequent network traffic. Alternatively, the middlebox may allow the current session to pass through if it starts in a passive monitoing mode.  It decrypts the next session from the same client based on the “decrypt” policy decision.</t>
+<t>For the outbound session scenario, MITM is enabled by generating a local root certificate and an accompanying (local) public/private key pair. The local root certificate is installed on the inside entities for which TLS traffic is to be inspected, and the network security device(s) store a copy of the private key. During the TLS handshake, the network security device (hereafter referred to as a middlebox) makes a policy decision on the current TLS session. The policy decision could be pass-through, decrypt, deny, etc. On a “decrypt” policy action, the middlebox becomes a TLS proxy for this TLS session. It modifies the certificate provided by the (outside) server and (re)signs it with the private key from the local root certificate. From here on, the middlebox has visibility into further exchanges between the client and server which enables it to decrypt and inspect subsequent network traffic. Alternatively, based on policy, the middlebox may allow the current session to pass through if the session starts in monitoring mode, and then decrypt the next session from the same client.</t>
 
-<t>For the inbound session scenario, the TLS proxy on middlebox is configured with a copy of the local servers’ certificate(s) and corresponding private key(s). Based on the server certificate presented, the TLS proxy determines the corresponding private key, which again enables the middlebox to gain visibility into further exchanges between the client and server and hence decrypt subsequent network traffic.</t>
+<t>For the inbound session scenario, the TLS proxy on the middlebox is configured with a copy of the local servers’ certificate(s) and corresponding private key(s). Based on the server certificate presented, the TLS proxy determines the corresponding private key, which again enables the middlebox to gain visibility into further exchanges between the client and server and hence decrypt subsequent network traffic.</t>
 
 <t>To date, there are a number of use case scenarios that rely on the above capabilities when used with TLS 1.2 <xref target="RFC5246"/> or earlier. TLS 1.3 <xref target="I-D.ietf-tls-tls13"/> introduces several changes which prevent a number of these use case scenarios from being satisfied with the types of TLS proxy based capabilities that exist today.</t>
 
 <t>It has been noted, that currently deployed TLS proxies on middleboxes may reduce the security of the TLS connection itself due to a combination of poor implementation and configuration, and they may compromise privacy when decrypting a TLS session. As such, it has been argued that preventing TLS proxies from working should be viewed as a feature of TLS 1.3 and that the proper way of solving these issues is to rely on endpoint (client and server) based solutions instead. We believe this is an overly constrained view of the problem that ignores a number of important real-life use case scenarios that improve the overall security posture. We also note that current endpoint-based TLS proxies suffer from many of the same security issues as the network-based TLS proxies do <xref target="HTTPSintercept"/>.</t>
 
-<t>The purpose of this document is to provide a representative set of <spanx style="emph">network based security</spanx> use case scenarios that are negatively impacted by TLS 1.3 and do not lend themselves to an endpoint-based alternative solution. For each use case scenario, we highlight the specific aspect(s) of TLS 1.3 that makes the use case problematic with a TLS proxy based solution and we explain why an endpoint-based only solution is not considered acceptable.</t>
+<t>The purpose of this document is to provide a representative set of <spanx style="emph">network based security</spanx> use case scenarios that are impacted by TLS 1.3. For each use case scenario, we highlight the specific aspect(s) of TLS 1.3 that may make the use case problematic with a TLS proxy based solution.</t>
 
 <t>It should be noted that this document addresses only <spanx style="emph">security</spanx> use cases with a focus on identifying the problematic ones. The document does not offer specific solutions to these as the goal is to stimulate further discussion and explore possible solutions subsequently.</t>
 
@@ -130,7 +130,7 @@ and “OPTIONAL” are to be interpreted as described in BCP 14, RFC 2119
 <section anchor="outbound-session-change-impacts" title="Outbound Session Change Impacts">
 
 <section anchor="encrypted-server-certificate" title="Encrypted Server Certificate">
-<t>In TLS 1.2, the ClientHello message is sent to the server’s transport address (IP and port). The ClientHello message may include the Server Name Indication (SNI) to specify the hostname the client wishes to contact. This is useful when multiple “virtual servers” are hosted on a given transport address (IP and port). It also provides information about the domain the client is attempting to reach.</t>
+<t>In TLS, the ClientHello message is sent to the server’s transport address (IP and port). The ClientHello message may include the Server Name Indication (SNI) to specify the hostname the client wishes to contact. This is useful when multiple “virtual servers” are hosted on a given transport address (IP and port). It also provides information about the domain the client is attempting to reach.</t>
 
 <t>The server replies with a ServerHello message, which contains the selected connection parameters, followed by a Certificate message, which contains the server’s certificate and hence its identity.</t>
 
@@ -161,9 +161,7 @@ and “OPTIONAL” are to be interpreted as described in BCP 14, RFC 2119
 
 <t>In TLS 1.3, the random value in the ServerHello message includes a special value in the last eight bytes when the server negotiates either TLS 1.2 or TLS 1.1 and below. The special value(s) enable a TLS 1.3 client to detect an active attacker launching a downgrade attack when the client did indeed reach a TLS 1.3 server, provided ephemeral ciphers are being used.</t>
 
-<t>From a network security point of view, the primary impact is that TLS 1.3 requires the TLS proxy to be an active man-in-the-middle from the start of the handshake. However, a middlebox that supports only TLS 1.2 may let the initial TLS 1.3 ClientHello proceed resulting in a TLS 1.3 ServerHello from the server, which the middlebox does not support. Depending on the policy configured, the TLS proxy may reject the session at that point.</t>
-
-<t>If the TLS 1.2 middlebox takes on an active role in the handshake from the start, then the middlebox effectively proxies between a client-to-middlebox and a middlebox-to-server TLS connection, in which case the handshake succeeds (but as TLS 1.2). Note that due to downgrade protection, the proxy cannot simply downgrade the TLS version to 1.2 in the ClientHellow, which would enable it to disengage from the handshake later.</t>
+<t>From a network security point of view, the primary impact is that TLS 1.3 requires the TLS proxy to be an active man-in-the-middle from the start of the handshake. It is also required that a TLS 1.2 and below middlebox implementation must handle unsupported extensions gracefully, which is a requirement for a conformant middlebox.</t>
 
 
 </section>
@@ -197,8 +195,6 @@ and “OPTIONAL” are to be interpreted as described in BCP 14, RFC 2119
 
 <t>The embedded address and port correction operation requires access to the L7 payload which could be protected by encryption.</t>
 
-<t>While TLS 1.3 will not prevent the middlebox from performing this function, once a proxy function is established, the middlebox is not able to remove itself from the packet path for the particular session.</t>
-
 </section>
 <section anchor="InboundCompliance" title="Use Case I3 - Compliance">
 <t>Many regulations exist today that include cyber security requirements requiring close inspection of the information traversing through the network.  For example, organizations that require PCI-DSS <xref target="PCI-DSS"/>
@@ -215,7 +211,7 @@ compliance must provide the ability to regularly monitor the network to prevent,
 </section>
 </section>
 <section anchor="outbound-session-use-cases" title="Outbound Session Use Cases">
-<t>In this section we explain how a set of real-life outbound session use case scenarios are affected by some of the TLS 1.3 changes.</t>
+<t>In this section we explain a set of real-life outbound session use case scenarios. These scenarios remain functional with TLS 1.3 though the performance is impacted by the additional crypto loads.</t>
 
 <section anchor="use-case-o1-acceptable-use-policy-aup" title="Use Case O1 - Acceptable Use Policy (AUP)">
 <t>Enterprises deploy security devices to enforce Acceptable Use Policy (AUP) according to the IT and workplace policies. The security devices, such as firewall/next-gen firewall, web proxy and an application on the endpoints, act as middleboxes to scan traffic in the enterprise network for policy enforcement.</t>
@@ -229,9 +225,7 @@ compliance must provide the ability to regularly monitor the network to prevent,
 
 <t>Such enforcements are accomplished by controlling the DNS transactions and HTTP transactions.  A coarse control is achieved by controlling the DNS response (which itself may be protected by TLS), however, in many cases, granular control is required at HTTP URL or Method levels, to distinguish a specific web page on a hosting site, or to differentiate between uploading and downloading operations.</t>
 
-<t>The security device requires access to plain text HTTP header for granular AUP control. For traffic passing the AUP check, the middlebox is also required to cut through the rest of the traffic without decryption, for performance and privacy reasons.</t>
-
-<t>The cut-through action is possible with up to TLS 1.2 but will not work with TLS 1.3.</t>
+<t>The security device requires access to plain text HTTP header for granular AUP control.</t>
 
 
 
@@ -243,7 +237,7 @@ compliance must provide the ability to regularly monitor the network to prevent,
 
 <t>The network based solutions comprise security devices and applications that scan network traffic for the purpose from malware signatures to 0-day analysis.</t>
 
-<t>The security functions require access to clear text HTTP or other application level streams on a needed basis. After a successful scan the traffic should be allowed to flow through without being decrypted continuously. This is not possible with TLS 1.3.</t>
+<t>The security functions require access to clear text HTTP or other application level streams on a needed basis.</t>
 
 
 
@@ -257,7 +251,7 @@ compliance must provide the ability to regularly monitor the network to prevent,
   <t>Lack of software updates as new vulnerabilities are discovered.</t>
 </list></t>
 
-<t>In short, the security posture of such devices is expected to be weak, especially as they get older, and the only way to improve this posture is to supplement them with a network-based solution. This in turn requires a MITM, and with TLS 1.3, this implies the MITM must be present at all times since the TLS 1.3 proxy must engage during the ClientHello and cannot disengage subsequently.</t>
+<t>In short, the security posture of such devices is expected to be weak, especially as they get older, and the only way to improve this posture is to supplement them with a network-based solution. This in turn requires a MITM.</t>
 
 </section>
 <section anchor="use-case-o4-unpatched-endpoints" title="Use Case O4 - Unpatched Endpoints">
@@ -265,27 +259,21 @@ compliance must provide the ability to regularly monitor the network to prevent,
 
 <t>In theory, these endpoints should of course be patched, but in practice, it is often not done which leaves the endpoint open to the vulnerability in question. A network-based security solution can look for attempted exploits of such vulnerabilities and stop them before they reach the unpatched endpoint.</t>
 
-<t>With TLS 1.3, the network-based security solution must act as a MITM at all times, since it must engage during the ClientHello and cannot disengage subsequently.</t>
-
 </section>
 <section anchor="use-case-o5-rapid-containment-of-new-vulnerability-and-campaigns" title="Use Case O5 - Rapid Containment of New Vulnerability and Campaigns">
 <t>When a new vulnerability is discovered or an attack campaign is launched, it is important to patch the vulnerability or contain the campaign as quickly as possible. Patches however are not always available immediately, and even when they are, most endpoints are in practice not patched immediately, which leaves them open to the attack.</t>
 
 <t>A network-based security solution can look for attempted exploits of such new vulnerabilities or recognize an attack being launched based on security intelligence related to the campaign and stop them before they reach the vulnerable endpoint.</t>
 
-<t>With TLS 1.3, the network-based security solution must act as a MITM at all times, since it must engage during the ClientHello and cannot disengage subsequently.</t>
-
 </section>
 <section anchor="use-case-o6-end-of-life-endpoint" title="Use Case O6 - End-of-Life Endpoint">
 <t>Older endpoints (and in some cases even new ones) will not receive any software updates. As new vulnerabilities inevitably are discovered, these endpoints will be vulnerable to exploits.</t>
 
-<t>A network-based security solution can help prevent such exploits. With TLS 1.3, the network-based security solution must act as a MITM at all times, since it must engage during the ClientHello and cannot disengage subsequently.</t>
+<t>A network-based security solution can help prevent such exploits with the MITM functions.</t>
 
 </section>
 <section anchor="use-case-o7-compliance" title="Use Case O7 - Compliance">
 <t>This use case is similar to the inbound compliance use case described in <xref target="InboundCompliance"/>, except its from the client point of view.</t>
-
-<t>Again, the only way to satisfy the use case scenario around network-based audit is for the middlebox to always become an active MITM.</t>
 
 </section>
 <section anchor="use-case-o8-crypto-security-audit" title="Use Case O8 - Crypto Security Audit">
@@ -375,218 +363,208 @@ compliance must provide the ability to regularly monitor the network to prevent,
   </back>
 
 <!-- ##markdown-source:
-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
-2f8G5wGY1b5tAAA=
+H4sIAKuXNlsAA+19a28bSZbldwL1HwIqDCwZpGzZVV3dGgx2VbKM0owfWkue
+wmDRKAQzg2S2kxmcjEzR7IL/+95zb7wyScnu7cYuMJhCF5oiM+Nxn+c+Imo2
+m3036aquNufq7s2tOjt9qa7XG110yjbqnem2tv00+1k7U6pbU/Rt1e2+m+j5
+vDX35+p69uq7SWmLRq/p/bLVi25W6PW2apamm3W1m/XO0DfOuNnzF/So7ui5
+F8/P/jh7/ofZ2Y/fTQr6Zmnb3bmqmoX9blJt2nPVtb3rXjx//ie8Q7P13cq2
+599NZhNF/1SNO1evT9VFU7aGhm74W1nC69qs1zT76EfbLs/VZeUKq253rjNr
+x1+bta7qc7XQ8vD/LPDEaWHX/KvrWmO6c3V2dqZ+tbZUF/em6Y26tbQefqKw
+Jc355Pkf//jy+RP5hshDZHGmrmTm1iwr25yrd//q3+ibDrv9eHsxyffz7lRd
+6vXsV6ZctqF3uil2459oO7qp/qo7HvrBfTWeFQ/s6+WPPz73L/+qd/mG/vTj
+2csf8g3d6kb9q3VmsKXLi8e3dHVK4zbLbDNXbVWk7x5nivnLVv+/Xfqkse2a
+aHpvzvnXD68vX5yd/Sn+8eOLH/4gf5DYn1amW7CE079nL89JTCHAgwHw2JIW
+3PBzrqOfilm5mlVNeGlvMNdUM9MU7W7DvI1TP//pp/jHT3944f/45e7u5rZq
+OtMWZtPJd/in0+0SZFp13cadP3v2l5WuS9OuQcdnm37+bKM3pnXP4qs016wp
+nTv76XRTLtI43i6sTNT9aBwWMru6zsbgF28uaUe3t+fjUY5u9G5tmo6EuS3p
+tZJ0vN2pY3r+5Fy90p1Ok9x2pJL02NGDW9put6cbEg7/hvMvuFOSqmdkkXpM
+5Z7R4L/RYn67fzl7Ebf27urD5eX1zf4K39m2W6mLtSE5JbG5qk3RQWQ/kDrr
+eVVjaZe23diWVW+qjmmYE3VJK6AXatrUotW0q77o+taom9Z2NAI9eXgffhsN
+0U84o5/xPp7d6KVxz7JZAz3cx6bqTEl/dsadarf5/D/+Qvt3ZcXT/Iv8/E8v
+nssTkwnM52w2U3pOyyK+4e9g1Ods1AMFlbN1j0Gc0rT2Hr/Nd8qAvRuawrip
+ItGpiRz0SmfbqaI1qaK2PQZp76vCqE1r7yuSNKc6W+od2QHScvqb/lRzS7Sl
+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
 
 -->
 
