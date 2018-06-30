@@ -125,9 +125,11 @@ In TLS, the ClientHello message is sent to the server's transport address (IP an
 
 The server replies with a ServerHello message, which contains the selected connection parameters, followed by a Certificate message, which contains the server's certificate and hence its identity.
 
-In TLS 1.2, the ClientHello, ServerHello and Certificate messages are all sent in clear-text, however in TLS 1.3, the Certificate message is encrypted thereby hiding the server identity from any intermediary. Note that even *if* the SNI is provided (in cleartext) by the client, there is no guarantee that the actual server responding is the one indicated in the SNI from the client.
+Note that even *if* the SNI is provided by the client, there is no guarantee that the actual server responding is the one indicated in the SNI from the client. SNI alone does not provide reliable information about the server that the client attempts to reach.
 
-Example scenarios that are impacted by this involve selective network security policies, such as whitelists or blacklists based on security intelligence, regulatory requirements, categories (e.g. financial services), etc. An added challenge is that some of these scenarios require the middlebox to perform decryption and inspection, whereas other scenarios require the middlebox to *not* perform decryption or inspection. The middlebox is not able to make the policy decisions without actively engaging in the TLS session from the beginning of the handshake.
+In TLS 1.2, the ClientHello, ServerHello and Certificate messages are all sent in clear-text, however in TLS 1.3, the Certificate message is encrypted thereby hiding the server identity from any intermediary. 
+
+Example scenarios that are impacted by this involve selective network security policies on the server, such as whitelists or blacklists based on security intelligence, regulatory requirements, categories (e.g. financial services), etc. An added challenge is that some of these scenarios require the middlebox to perform decryption and inspection, whereas other scenarios require the middlebox to *not* perform decryption or inspection. The middlebox is not able to make the policy decisions without actively engaging in the TLS session from the beginning of the handshake.
 
 From a network infrastructure perspective,  policies to validate SNI against the Server Certificate can not be validated as the Server certificate is now obscured to the middlebox.  Furthermore, policies that may require richer information about the TLS Server obtained from the Server certificate are also impacted as the certficate is now encrypted.  
 
