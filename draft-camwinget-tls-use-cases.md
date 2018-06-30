@@ -218,7 +218,7 @@ While the audits and policy enforcements could in theory be done on the servers 
 
 
 # Outbound Session Use Cases
-In this section we explain a set of real-life outbound session use case scenarios. These scenarios remain functional with TLS 1.3 though the performance is impacted by the additional crypto loads.
+In this section we explain a set of real-life outbound session use case scenarios. These scenarios remain functional with TLS 1.3 though the TLS proxy's performance is impacted by participating in the DHE key exchange from the beginning of the handshake. 
 
 ## Use Case O1 - Acceptable Use Policy (AUP)
 Enterprises deploy security devices to enforce Acceptable Use Policy (AUP) according to the IT and workplace policies. The security devices, such as firewall/next-gen firewall, web proxy and an application on the endpoints, act as middleboxes to scan traffic in the enterprise network for policy enforcement.
