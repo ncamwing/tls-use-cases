@@ -5,8 +5,8 @@
 Network Working Group                                       F. Andreasen
 Internet-Draft                                             N. Cam-Winget
 Intended status: Informational                                   E. Wang
-Expires: December 31, 2018                                 Cisco Systems
-                                                           June 29, 2018
+Expires: January 1, 2019                                   Cisco Systems
+                                                           June 30, 2018
 
 
                 TLS 1.3 Impact on Network-Based Security
@@ -42,7 +42,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 31, 2018.
+   This Internet-Draft will expire on January 1, 2019.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Andreasen, et al.       Expires December 31, 2018               [Page 1]
+Andreasen, et al.        Expires January 1, 2019                [Page 1]
 
 Internet-Draft                     I-D                         June 2018
 
@@ -109,7 +109,7 @@ Internet-Draft                     I-D                         June 2018
 
 
 
-Andreasen, et al.       Expires December 31, 2018               [Page 2]
+Andreasen, et al.        Expires January 1, 2019                [Page 2]
 
 Internet-Draft                     I-D                         June 2018
 
@@ -165,7 +165,7 @@ Internet-Draft                     I-D                         June 2018
 
 
 
-Andreasen, et al.       Expires December 31, 2018               [Page 3]
+Andreasen, et al.        Expires January 1, 2019                [Page 3]
 
 Internet-Draft                     I-D                         June 2018
 
@@ -221,7 +221,7 @@ Internet-Draft                     I-D                         June 2018
 
 
 
-Andreasen, et al.       Expires December 31, 2018               [Page 4]
+Andreasen, et al.        Expires January 1, 2019                [Page 4]
 
 Internet-Draft                     I-D                         June 2018
 
@@ -245,22 +245,25 @@ Internet-Draft                     I-D                         June 2018
    selected connection parameters, followed by a Certificate message,
    which contains the server's certificate and hence its identity.
 
+   Note that even _if_ the SNI is provided by the client, there is no
+   guarantee that the actual server responding is the one indicated in
+   the SNI from the client.  SNI alone does not provide reliable
+   information about the server that the client attempts to reach.
+
    In TLS 1.2, the ClientHello, ServerHello and Certificate messages are
    all sent in clear-text, however in TLS 1.3, the Certificate message
    is encrypted thereby hiding the server identity from any
-   intermediary.  Note that even _if_ the SNI is provided (in cleartext)
-   by the client, there is no guarantee that the actual server
-   responding is the one indicated in the SNI from the client.
+   intermediary.
 
    Example scenarios that are impacted by this involve selective network
-   security policies, such as whitelists or blacklists based on security
-   intelligence, regulatory requirements, categories (e.g. financial
-   services), etc.  An added challenge is that some of these scenarios
-   require the middlebox to perform decryption and inspection, whereas
-   other scenarios require the middlebox to _not_ perform decryption or
-   inspection.  The middlebox is not able to make the policy decisions
-   without actively engaging in the TLS session from the beginning of
-   the handshake.
+   security policies on the server, such as whitelists or blacklists
+   based on security intelligence, regulatory requirements, categories
+   (e.g. financial services), etc.  An added challenge is that some of
+   these scenarios require the middlebox to perform decryption and
+   inspection, whereas other scenarios require the middlebox to _not_
+   perform decryption or inspection.  The middlebox is not able to make
+   the policy decisions without actively engaging in the TLS session
+   from the beginning of the handshake.
 
    From a network infrastructure perspective, policies to validate SNI
    against the Server Certificate can not be validated as the Server
@@ -269,18 +272,21 @@ Internet-Draft                     I-D                         June 2018
    from the Server certificate are also impacted as the certficate is
    now encrypted.
 
+
+
+
+
+
+Andreasen, et al.        Expires January 1, 2019                [Page 5]
+
+Internet-Draft                     I-D                         June 2018
+
+
 2.2.2.  Version Negotiation and Downgrade Protection
 
    In TLS, the ClientHello message includes a list of supported protocol
    versions.  The server will select the highest supported version and
    indicate its choice in the ServerHello message.
-
-
-
-Andreasen, et al.       Expires December 31, 2018               [Page 5]
-
-Internet-Draft                     I-D                         June 2018
-
 
    TLS 1.3 changes the way in which version negotiation is performed.
    The ClientHello message will indicate TLS version 1.3 in the new
@@ -322,21 +328,20 @@ Internet-Draft                     I-D                         June 2018
    SNI, the middlebox may not have the information required to determine
    the actual scenario before it is too late.
 
+
+
+
+
+
+Andreasen, et al.        Expires January 1, 2019                [Page 6]
+
+Internet-Draft                     I-D                         June 2018
+
+
 3.  Inbound Session Use Cases
 
    In this section we explain how a set of inbound real-life inbound use
    case scenarios are affected by some of the TLS 1.3 changes.
-
-
-
-
-
-
-
-Andreasen, et al.       Expires December 31, 2018               [Page 6]
-
-Internet-Draft                     I-D                         June 2018
-
 
 3.1.  Use Case I1 - Data Center Protection
 
@@ -381,18 +386,18 @@ Internet-Draft                     I-D                         June 2018
    compliance must provide the ability to regularly monitor the network
    to prevent, detect and minimize impact of a data compromise.
    [PCI-DSS] Requirement #2 (and Appendix A2 as it concerns TLS)
+
+
+
+Andreasen, et al.        Expires January 1, 2019                [Page 7]
+
+Internet-Draft                     I-D                         June 2018
+
+
    describes the need to be able to detect protocol and protocol usage
    correctness.  Further, [PCI-DSS] Requirement #10 detailing monitoring
    capabilities also describe the need to provide network-based audit to
    ensure that the protocols and configurations are properly used.
-
-
-
-
-Andreasen, et al.       Expires December 31, 2018               [Page 7]
-
-Internet-Draft                     I-D                         June 2018
-
 
    Deployments today still use factory or default credentials and
    settings that must be observed, and to meet regulatory compliance,
@@ -421,7 +426,8 @@ Internet-Draft                     I-D                         June 2018
 
    In this section we explain a set of real-life outbound session use
    case scenarios.  These scenarios remain functional with TLS 1.3
-   though the performance is impacted by the additional crypto loads.
+   though the TLS proxy's performance is impacted by participating in
+   the DHE key exchange from the beginning of the handshake.
 
 4.1.  Use Case O1 - Acceptable Use Policy (AUP)
 
@@ -436,20 +442,20 @@ Internet-Draft                     I-D                         June 2018
    o  "Employees are not allowed to access 'gaming' websites from
       enterprise network"
 
+
+
+
+Andreasen, et al.        Expires January 1, 2019                [Page 8]
+
+Internet-Draft                     I-D                         June 2018
+
+
    o  "Temporary workers are not allowed to use enterprise network to
       upload video clips to Internet, but are allowed to watch video
       clips"
 
    Such enforcements are accomplished by controlling the DNS
    transactions and HTTP transactions.  A coarse control is achieved by
-
-
-
-Andreasen, et al.       Expires December 31, 2018               [Page 8]
-
-Internet-Draft                     I-D                         June 2018
-
-
    controlling the DNS response (which itself may be protected by TLS),
    however, in many cases, granular control is required at HTTP URL or
    Method levels, to distinguish a specific web page on a hosting site,
@@ -492,19 +498,16 @@ Internet-Draft                     I-D                         June 2018
 
    In short, the security posture of such devices is expected to be
    weak, especially as they get older, and the only way to improve this
-   posture is to supplement them with a network-based solution.  This in
-   turn requires a MITM.
 
 
 
-
-
-
-
-Andreasen, et al.       Expires December 31, 2018               [Page 9]
+Andreasen, et al.        Expires January 1, 2019                [Page 9]
 
 Internet-Draft                     I-D                         June 2018
 
+
+   posture is to supplement them with a network-based solution.  This in
+   turn requires a MITM.
 
 4.4.  Use Case O4 - Unpatched Endpoints
 
@@ -548,20 +551,23 @@ Internet-Draft                     I-D                         June 2018
    This use case is similar to the inbound compliance use case described
    in Section 3.3, except its from the client point of view.
 
+
+
+
+
+
+
+Andreasen, et al.        Expires January 1, 2019               [Page 10]
+
+Internet-Draft                     I-D                         June 2018
+
+
 4.8.  Use Case O8 - Crypto Security Audit
 
    This is a variation of the use case in Section 3.4.
 
    Organizations may have policies around acceptable ciphers and
    certificates for client sessions, possibly based on the destination.
-
-
-
-Andreasen, et al.       Expires December 31, 2018              [Page 10]
-
-Internet-Draft                     I-D                         June 2018
-
-
    Examples include no use of self-signed certificates, black or white-
    list Certificate Authority, etc.  In TLS 1.2, the Certificate message
    was sent in clear-text, however in TLS 1.3 the message is encrypted
@@ -602,21 +608,20 @@ Internet-Draft                     I-D                         June 2018
               Version 1.3", draft-ietf-tls-tls13-28 (work in progress),
               March 2018.
 
+
+
+
+
+
+Andreasen, et al.        Expires January 1, 2019               [Page 11]
+
+Internet-Draft                     I-D                         June 2018
+
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
-
-
-
-
-
-
-
-Andreasen, et al.       Expires December 31, 2018              [Page 11]
-
-Internet-Draft                     I-D                         June 2018
-
 
    [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
               (TLS) Protocol Version 1.2", RFC 5246,
@@ -660,19 +665,16 @@ Internet-Draft                     I-D                         June 2018
               RFC 7627, DOI 10.17487/RFC7627, September 2015,
               <https://www.rfc-editor.org/info/rfc7627>.
 
-Authors' Addresses
 
 
 
 
-
-
-
-
-Andreasen, et al.       Expires December 31, 2018              [Page 12]
+Andreasen, et al.        Expires January 1, 2019               [Page 12]
 
 Internet-Draft                     I-D                         June 2018
 
+
+Authors' Addresses
 
    Flemming Andreasen
    Cisco Systems
@@ -723,6 +725,4 @@ Internet-Draft                     I-D                         June 2018
 
 
 
-
-
-Andreasen, et al.       Expires December 31, 2018              [Page 13]
+Andreasen, et al.        Expires January 1, 2019               [Page 13]
