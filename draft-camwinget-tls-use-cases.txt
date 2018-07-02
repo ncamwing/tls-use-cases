@@ -5,8 +5,8 @@
 Network Working Group                                       F. Andreasen
 Internet-Draft                                             N. Cam-Winget
 Intended status: Informational                                   E. Wang
-Expires: January 1, 2019                                   Cisco Systems
-                                                           June 30, 2018
+Expires: January 3, 2019                                   Cisco Systems
+                                                           July 02, 2018
 
 
                 TLS 1.3 Impact on Network-Based Security
@@ -42,7 +42,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 1, 2019.
+   This Internet-Draft will expire on January 3, 2019.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Andreasen, et al.        Expires January 1, 2019                [Page 1]
+Andreasen, et al.        Expires January 3, 2019                [Page 1]
 
-Internet-Draft                     I-D                         June 2018
+Internet-Draft                     I-D                         July 2018
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -109,9 +109,9 @@ Internet-Draft                     I-D                         June 2018
 
 
 
-Andreasen, et al.        Expires January 1, 2019                [Page 2]
+Andreasen, et al.        Expires January 3, 2019                [Page 2]
 
-Internet-Draft                     I-D                         June 2018
+Internet-Draft                     I-D                         July 2018
 
 
    1.  Outbound Session, where the TLS session originates from a client
@@ -165,9 +165,9 @@ Internet-Draft                     I-D                         June 2018
 
 
 
-Andreasen, et al.        Expires January 1, 2019                [Page 3]
+Andreasen, et al.        Expires January 3, 2019                [Page 3]
 
-Internet-Draft                     I-D                         June 2018
+Internet-Draft                     I-D                         July 2018
 
 
    that current endpoint-based TLS proxies suffer from many of the same
@@ -221,9 +221,9 @@ Internet-Draft                     I-D                         June 2018
 
 
 
-Andreasen, et al.        Expires January 1, 2019                [Page 4]
+Andreasen, et al.        Expires January 3, 2019                [Page 4]
 
-Internet-Draft                     I-D                         June 2018
+Internet-Draft                     I-D                         July 2018
 
 
    For further details (and a suggested solution), please refer to
@@ -277,12 +277,45 @@ Internet-Draft                     I-D                         June 2018
 
 
 
-Andreasen, et al.        Expires January 1, 2019                [Page 5]
+Andreasen, et al.        Expires January 3, 2019                [Page 5]
 
-Internet-Draft                     I-D                         June 2018
+Internet-Draft                     I-D                         July 2018
 
 
-2.2.2.  Version Negotiation and Downgrade Protection
+2.2.2.  Resumption and Pre-Shared Key
+
+   In TLS 1.2 and below, session resumption is provided by "session IDs"
+   and "session tickets" [RFC5077].  If the server does not want to
+   honor a ticket, then it can simply initiate a full TLS handshake with
+   the client as usual.
+
+   In TLS 1.3, the above mechanism is replaced by Pre-Shared Keys (PSK),
+   which can be negotiated as part of an initial handshake and then used
+   in a subsequent handshake to perform resumption using the PSK.  TLS
+   1.3 states that the client SHOULD include a "key_share" extension to
+   enable the server to decline resumption and fall back to a full
+   handshake, however it is not an absolute requirement.
+
+   Example scenarios that are impacted by this are middleboxes that were
+   not part of the initial handshake, and hence do not know the PSK.  If
+   the client does not include the "key_share" extension, the middlebox
+   cannot force a fallback to the full handshake.  If the middlebox
+   policy requires it to inspect the session, it will have to fail the
+   connection instead.
+
+   Note that in practice though, it is unlikely that clients using
+   session resumption will not allow for fallback to a full handshake
+   since the server may treat a ticket as valid for a shorter period of
+   time that what is stated in the ticket_lifetime [I-D.ietf-tls-tls13].
+   As long as the client advertises a supported DH group, the server (or
+   middlebox) can always send a HelloRetryRequest to force the client to
+   send a key_share and hence a full handshake.
+
+   Clients that truly only support PSK mode of operation (provisioned
+   out of band) will of course not negotiate a new key, however that is
+   not a change in TLS 1.3.
+
+2.2.3.  Version Negotiation and Downgrade Protection
 
    In TLS, the ClientHello message includes a list of supported protocol
    versions.  The server will select the highest supported version and
@@ -295,6 +328,15 @@ Internet-Draft                     I-D                         June 2018
    in the "legacy_version" field.  A TLS 1.3 server will recognize that
    TLS 1.3 is being negotiated, whereas a TLS 1.2 server will simply see
    a TLS 1.2 ClientHello and proceed with TLS 1.2 negotiation.
+
+
+
+
+
+Andreasen, et al.        Expires January 3, 2019                [Page 6]
+
+Internet-Draft                     I-D                         July 2018
+
 
    In TLS 1.3, the random value in the ServerHello message includes a
    special value in the last eight bytes when the server negotiates
@@ -309,7 +351,7 @@ Internet-Draft                     I-D                         June 2018
    middlebox implementation must handle unsupported extensions
    gracefully, which is a requirement for a conformant middlebox.
 
-2.2.3.  SNI Encryption in TLS Through Tunneling
+2.2.4.  SNI Encryption in TLS Through Tunneling
 
    As noted above, with server certificates encrypted, the Server Name
    Indication (SNI) in the ClientHello message is the only information
@@ -328,16 +370,6 @@ Internet-Draft                     I-D                         June 2018
    SNI, the middlebox may not have the information required to determine
    the actual scenario before it is too late.
 
-
-
-
-
-
-Andreasen, et al.        Expires January 1, 2019                [Page 6]
-
-Internet-Draft                     I-D                         June 2018
-
-
 3.  Inbound Session Use Cases
 
    In this section we explain how a set of inbound real-life inbound use
@@ -354,6 +386,14 @@ Internet-Draft                     I-D                         June 2018
 
    These network security functions are usually deployed in two modes:
    monitoring and inline.  In either case, they need to access the L7
+
+
+
+Andreasen, et al.        Expires January 3, 2019                [Page 7]
+
+Internet-Draft                     I-D                         July 2018
+
+
    and application data such as HTTP transactions which could be
    protected by TLS encryption.  They may monitor the TLS handshakes for
    additional visibility and control.
@@ -386,14 +426,6 @@ Internet-Draft                     I-D                         June 2018
    compliance must provide the ability to regularly monitor the network
    to prevent, detect and minimize impact of a data compromise.
    [PCI-DSS] Requirement #2 (and Appendix A2 as it concerns TLS)
-
-
-
-Andreasen, et al.        Expires January 1, 2019                [Page 7]
-
-Internet-Draft                     I-D                         June 2018
-
-
    describes the need to be able to detect protocol and protocol usage
    correctness.  Further, [PCI-DSS] Requirement #10 detailing monitoring
    capabilities also describe the need to provide network-based audit to
@@ -405,6 +437,18 @@ Internet-Draft                     I-D                         June 2018
    credential is now encrypted in TLS 1.3, the ability to verify the
    appropriate (or compliant) use of these credentials are lost, unless
    the middlebox always becomes an active MITM.
+
+
+
+
+
+
+
+
+Andreasen, et al.        Expires January 3, 2019                [Page 8]
+
+Internet-Draft                     I-D                         July 2018
+
 
 3.4.  Use Case I4 - Crypto Security Audit
 
@@ -442,14 +486,6 @@ Internet-Draft                     I-D                         June 2018
    o  "Employees are not allowed to access 'gaming' websites from
       enterprise network"
 
-
-
-
-Andreasen, et al.        Expires January 1, 2019                [Page 8]
-
-Internet-Draft                     I-D                         June 2018
-
-
    o  "Temporary workers are not allowed to use enterprise network to
       upload video clips to Internet, but are allowed to watch video
       clips"
@@ -460,6 +496,15 @@ Internet-Draft                     I-D                         June 2018
    however, in many cases, granular control is required at HTTP URL or
    Method levels, to distinguish a specific web page on a hosting site,
    or to differentiate between uploading and downloading operations.
+
+
+
+
+
+Andreasen, et al.        Expires January 3, 2019                [Page 9]
+
+Internet-Draft                     I-D                         July 2018
+
 
    The security device requires access to plain text HTTP header for
    granular AUP control.
@@ -498,14 +543,6 @@ Internet-Draft                     I-D                         June 2018
 
    In short, the security posture of such devices is expected to be
    weak, especially as they get older, and the only way to improve this
-
-
-
-Andreasen, et al.        Expires January 1, 2019                [Page 9]
-
-Internet-Draft                     I-D                         June 2018
-
-
    posture is to supplement them with a network-based solution.  This in
    turn requires a MITM.
 
@@ -516,6 +553,14 @@ Internet-Draft                     I-D                         June 2018
    reaction to security vulnerabilities, the reality is that a very
    large number of endpoints continue to run versions of software with
    known vulnerabilities.
+
+
+
+
+Andreasen, et al.        Expires January 3, 2019               [Page 10]
+
+Internet-Draft                     I-D                         July 2018
+
 
    In theory, these endpoints should of course be patched, but in
    practice, it is often not done which leaves the endpoint open to the
@@ -551,17 +596,6 @@ Internet-Draft                     I-D                         June 2018
    This use case is similar to the inbound compliance use case described
    in Section 3.3, except its from the client point of view.
 
-
-
-
-
-
-
-Andreasen, et al.        Expires January 1, 2019               [Page 10]
-
-Internet-Draft                     I-D                         June 2018
-
-
 4.8.  Use Case O8 - Crypto Security Audit
 
    This is a variation of the use case in Section 3.4.
@@ -576,6 +610,14 @@ Internet-Draft                     I-D                         June 2018
 
    While the audits and policy enforcements could in theory be done on
    the clients themselves, not all clients are configured correctly and
+
+
+
+Andreasen, et al.        Expires January 3, 2019               [Page 11]
+
+Internet-Draft                     I-D                         July 2018
+
+
    may not even be directly under configuration control of the
    organization in question (e.g. due to Bring Your Own Device).
 
@@ -608,16 +650,6 @@ Internet-Draft                     I-D                         June 2018
               Version 1.3", draft-ietf-tls-tls13-28 (work in progress),
               March 2018.
 
-
-
-
-
-
-Andreasen, et al.        Expires January 1, 2019               [Page 11]
-
-Internet-Draft                     I-D                         June 2018
-
-
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
@@ -633,6 +665,14 @@ Internet-Draft                     I-D                         June 2018
    [HTTPSintercept]
               "The Security Impact of HTTPS Interception", n.d.,
               <https://jhalderm.com/pub/papers/interception-ndss17.pdf>.
+
+
+
+
+Andreasen, et al.        Expires January 3, 2019               [Page 12]
+
+Internet-Draft                     I-D                         July 2018
+
 
    [I-D.green-tls-static-dh-in-tls13]
               Green, M., Droms, R., Housley, R., Turner, P., and S.
@@ -665,15 +705,6 @@ Internet-Draft                     I-D                         June 2018
               RFC 7627, DOI 10.17487/RFC7627, September 2015,
               <https://www.rfc-editor.org/info/rfc7627>.
 
-
-
-
-
-Andreasen, et al.        Expires January 1, 2019               [Page 12]
-
-Internet-Draft                     I-D                         June 2018
-
-
 Authors' Addresses
 
    Flemming Andreasen
@@ -683,6 +714,20 @@ Authors' Addresses
    USA
 
    Email: fandreas@cisco.com
+
+
+
+
+
+
+
+
+
+
+
+Andreasen, et al.        Expires January 3, 2019               [Page 13]
+
+Internet-Draft                     I-D                         July 2018
 
 
    Nancy Cam-Winget
@@ -725,4 +770,15 @@ Authors' Addresses
 
 
 
-Andreasen, et al.        Expires January 1, 2019               [Page 13]
+
+
+
+
+
+
+
+
+
+
+
+Andreasen, et al.        Expires January 3, 2019               [Page 14]
