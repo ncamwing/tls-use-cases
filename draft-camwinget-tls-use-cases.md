@@ -1,8 +1,8 @@
 ---
 title: TLS 1.3 Impact on Network-Based Security
 abbrev: I-D
-docname: draft-camwinget-tls-use-cases-02
-date:
+docname: draft-camwinget-tls-use-cases-03
+date: December 29, 2018
 category: info
 ipr: trust200902
 
@@ -44,13 +44,13 @@ author:
 normative:
     RFC2119:
     RFC5246:
-    I-D.ietf-tls-tls13:
+    RFC8446:
 
 informative:
+
     I-D.green-tls-static-dh-in-tls13:
     I-D.ietf-tls-sni-encryption:
     RFC5077:
-    RFC7627:
     HTTPSintercept:
         target: https://jhalderm.com/pub/papers/interception-ndss17.pdf
         title: The Security Impact of HTTPS Interception
@@ -83,7 +83,7 @@ For the outbound session scenario, MITM is enabled by generating a local root ce
 
 For the inbound session scenario, the TLS proxy on the middlebox is configured with a copy of the local servers' certificate(s) and corresponding private key(s). Based on the server certificate presented, the TLS proxy determines the corresponding private key, which again enables the middlebox to gain visibility into further exchanges between the client and server and hence decrypt subsequent network traffic.
 
-To date, there are a number of use case scenarios that rely on the above capabilities when used with TLS 1.2 {{RFC5246}} or earlier. TLS 1.3 {{I-D.ietf-tls-tls13}} introduces several changes which prevent a number of these use case scenarios from being satisfied with the types of TLS proxy based capabilities that exist today.
+To date, there are a number of use case scenarios that rely on the above capabilities when used with TLS 1.2 {{RFC5246}} or earlier. TLS 1.3 {{RFC8446}} introduces several changes which prevent a number of these use case scenarios from being satisfied with the types of TLS proxy based capabilities that exist today.
 
 It has been noted, that currently deployed TLS proxies on middleboxes may reduce the security of the TLS connection itself due to a combination of poor implementation and configuration, and they may compromise privacy when decrypting a TLS session. As such, it has been argued that preventing TLS proxies from working should be viewed as a feature of TLS 1.3 and that the proper way of solving these issues is to rely on endpoint (client and server) based solutions instead. We believe this is an overly constrained view of the problem that ignores a number of important real-life use case scenarios that improve the overall security posture. We also note that current endpoint-based TLS proxies suffer from many of the same security issues as the network-based TLS proxies do {{HTTPSintercept}}.
 
@@ -131,7 +131,9 @@ In TLS 1.2, the ClientHello, ServerHello and Certificate messages are all sent i
 
 Example scenarios that are impacted by this involve selective network security policies on the server, such as whitelists or blacklists based on security intelligence, regulatory requirements, categories (e.g. financial services), etc. An added challenge is that some of these scenarios require the middlebox to perform decryption and inspection, whereas other scenarios require the middlebox to *not* perform decryption or inspection. The middlebox is not able to make the policy decisions without actively engaging in the TLS session from the beginning of the handshake.
 
-From a network infrastructure perspective,  policies to validate SNI against the Server Certificate can not be validated as the Server certificate is now obscured to the middlebox.  Furthermore, policies that may require richer information about the TLS Server obtained from the Server certificate are also impacted as the certficate is now encrypted.  
+While conformant clients can generate the SNI and check that the server certificate contains a name matching the SNI; some enterprises also require a level of validation.  Thus, from a network infrastructure perspective,  policies to validate SNI against the Server Certificate can not be validated in TLS 1.3 as the Server certificate is now obscured to the middlebox.  This is an example where the network infrastructure is using one measure to protect the enterprise from non-conformant (e.g. evasive) clients and a conformant server.  As a general practice, security functions conduct cross checks and consistency checks wherever possible to mitigate imperfect or malicious implementations; even if they are deemed redundant with fully conformant implementations.  
+
+
 
 {::comment}
 These policies go to use cases where enterprises require assurances that their devices are protected from non-conforming servers.
@@ -145,7 +147,7 @@ In TLS 1.3, the above mechanism is replaced by Pre-Shared Keys (PSK), which can 
 Example scenarios that are impacted by this are middleboxes that were not part of the initial handshake, and hence do not know the PSK. If the client does not include the "key_share" extension, the middlebox cannot force a fallback to the full handshake. If the middlebox policy requires it to inspect the session, it will have to fail the connection instead.
 
 
-Note that in practice though, it is unlikely that clients using session resumption will not allow for fallback to a full handshake since the server may treat a ticket as valid for a shorter period of time that what is stated in the ticket_lifetime {{I-D.ietf-tls-tls13}}. As long as the client advertises a supported DH group, the server (or middlebox) can always send a HelloRetryRequest to force the client to send a key_share and hence a full handshake.
+Note that in practice though, it is unlikely that clients using session resumption will not allow for fallback to a full handshake since the server may treat a ticket as valid for a shorter period of time that what is stated in the ticket_lifetime {{RFC8446}}. As long as the client advertises a supported DH group, the server (or middlebox) can always send a HelloRetryRequest to force the client to send a key_share and hence a full handshake.
 
 Clients that truly only support PSK mode of operation (provisioned out of band) will of course not negotiate a new key, however that is not a change in TLS 1.3.
 
@@ -301,12 +303,15 @@ This document describes existing functionality and use case scenarios and as suc
 
 
 #  Acknowledgements
-Eric Rescorla provided several comments on technical accuracy and middlebox security implications.
+The authors thank Eric Rescorla who provided several comments on technical accuracy and middlebox security implications.
 
 #  Change Log
 
 ## Version -01
 Updates based on comments from Eric Rescorla.
+
+## Version -03
+Updates based on EKR's comments
 
 {::comment}
 # Contributors

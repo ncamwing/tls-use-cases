@@ -5,12 +5,12 @@
 Network Working Group                                       F. Andreasen
 Internet-Draft                                             N. Cam-Winget
 Intended status: Informational                                   E. Wang
-Expires: January 3, 2019                                   Cisco Systems
-                                                           July 02, 2018
+Expires: July 2, 2019                                      Cisco Systems
+                                                       December 29, 2018
 
 
                 TLS 1.3 Impact on Network-Based Security
-                    draft-camwinget-tls-use-cases-02
+                    draft-camwinget-tls-use-cases-03
 
 Abstract
 
@@ -42,7 +42,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 3, 2019.
+   This Internet-Draft will expire on July 2, 2019.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Andreasen, et al.        Expires January 3, 2019                [Page 1]
+Andreasen, et al.         Expires July 2, 2019                  [Page 1]
 
-Internet-Draft                     I-D                         July 2018
+Internet-Draft                     I-D                     December 2018
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -109,9 +109,9 @@ Internet-Draft                     I-D                         July 2018
 
 
 
-Andreasen, et al.        Expires January 3, 2019                [Page 2]
+Andreasen, et al.         Expires July 2, 2019                  [Page 2]
 
-Internet-Draft                     I-D                         July 2018
+Internet-Draft                     I-D                     December 2018
 
 
    1.  Outbound Session, where the TLS session originates from a client
@@ -148,9 +148,9 @@ Internet-Draft                     I-D                         July 2018
 
    To date, there are a number of use case scenarios that rely on the
    above capabilities when used with TLS 1.2 [RFC5246] or earlier.  TLS
-   1.3 [I-D.ietf-tls-tls13] introduces several changes which prevent a
-   number of these use case scenarios from being satisfied with the
-   types of TLS proxy based capabilities that exist today.
+   1.3 [RFC8446] introduces several changes which prevent a number of
+   these use case scenarios from being satisfied with the types of TLS
+   proxy based capabilities that exist today.
 
    It has been noted, that currently deployed TLS proxies on middleboxes
    may reduce the security of the TLS connection itself due to a
@@ -165,9 +165,9 @@ Internet-Draft                     I-D                         July 2018
 
 
 
-Andreasen, et al.        Expires January 3, 2019                [Page 3]
+Andreasen, et al.         Expires July 2, 2019                  [Page 3]
 
-Internet-Draft                     I-D                         July 2018
+Internet-Draft                     I-D                     December 2018
 
 
    that current endpoint-based TLS proxies suffer from many of the same
@@ -221,9 +221,9 @@ Internet-Draft                     I-D                         July 2018
 
 
 
-Andreasen, et al.        Expires January 3, 2019                [Page 4]
+Andreasen, et al.         Expires July 2, 2019                  [Page 4]
 
-Internet-Draft                     I-D                         July 2018
+Internet-Draft                     I-D                     December 2018
 
 
    For further details (and a suggested solution), please refer to
@@ -265,22 +265,26 @@ Internet-Draft                     I-D                         July 2018
    the policy decisions without actively engaging in the TLS session
    from the beginning of the handshake.
 
-   From a network infrastructure perspective, policies to validate SNI
-   against the Server Certificate can not be validated as the Server
-   certificate is now obscured to the middlebox.  Furthermore, policies
-   that may require richer information about the TLS Server obtained
-   from the Server certificate are also impacted as the certficate is
-   now encrypted.
+   While conformant clients can generate the SNI and check that the
+   server certificate contains a name matching the SNI; some enterprises
+   also require a level of validation.  Thus, from a network
+   infrastructure perspective, policies to validate SNI against the
+   Server Certificate can not be validated in TLS 1.3 as the Server
+   certificate is now obscured to the middlebox.  This is an example
+   where the network infrastructure is using one measure to protect the
+   enterprise from non-conformant (e.g. evasive) clients and a
+   conformant server.  As a general practice, security functions conduct
 
 
 
-
-
-
-Andreasen, et al.        Expires January 3, 2019                [Page 5]
+Andreasen, et al.         Expires July 2, 2019                  [Page 5]
 
-Internet-Draft                     I-D                         July 2018
+Internet-Draft                     I-D                     December 2018
 
+
+   cross checks and consistency checks wherever possible to mitigate
+   imperfect or malicious implementations; even if they are deemed
+   redundant with fully conformant implementations.
 
 2.2.2.  Resumption and Pre-Shared Key
 
@@ -306,8 +310,8 @@ Internet-Draft                     I-D                         July 2018
    Note that in practice though, it is unlikely that clients using
    session resumption will not allow for fallback to a full handshake
    since the server may treat a ticket as valid for a shorter period of
-   time that what is stated in the ticket_lifetime [I-D.ietf-tls-tls13].
-   As long as the client advertises a supported DH group, the server (or
+   time that what is stated in the ticket_lifetime [RFC8446].  As long
+   as the client advertises a supported DH group, the server (or
    middlebox) can always send a HelloRetryRequest to force the client to
    send a key_share and hence a full handshake.
 
@@ -326,17 +330,16 @@ Internet-Draft                     I-D                         July 2018
    "supported_versions" extension, however for backwards compatibility
    with TLS 1.2, the ClientHello message will indicate TLS version 1.2
    in the "legacy_version" field.  A TLS 1.3 server will recognize that
+
+
+
+Andreasen, et al.         Expires July 2, 2019                  [Page 6]
+
+Internet-Draft                     I-D                     December 2018
+
+
    TLS 1.3 is being negotiated, whereas a TLS 1.2 server will simply see
    a TLS 1.2 ClientHello and proceed with TLS 1.2 negotiation.
-
-
-
-
-
-Andreasen, et al.        Expires January 3, 2019                [Page 6]
-
-Internet-Draft                     I-D                         July 2018
-
 
    In TLS 1.3, the random value in the ServerHello message includes a
    special value in the last eight bytes when the server negotiates
@@ -384,16 +387,15 @@ Internet-Draft                     I-D                         July 2018
    level load balancer is not a security function strictly speaking, it
    is also an important function that resides in front of these services
 
+
+
+Andreasen, et al.         Expires July 2, 2019                  [Page 7]
+
+Internet-Draft                     I-D                     December 2018
+
+
    These network security functions are usually deployed in two modes:
    monitoring and inline.  In either case, they need to access the L7
-
-
-
-Andreasen, et al.        Expires January 3, 2019                [Page 7]
-
-Internet-Draft                     I-D                         July 2018
-
-
    and application data such as HTTP transactions which could be
    protected by TLS encryption.  They may monitor the TLS handshakes for
    additional visibility and control.
@@ -443,11 +445,9 @@ Internet-Draft                     I-D                         July 2018
 
 
 
-
-
-Andreasen, et al.        Expires January 3, 2019                [Page 8]
+Andreasen, et al.         Expires July 2, 2019                  [Page 8]
 
-Internet-Draft                     I-D                         July 2018
+Internet-Draft                     I-D                     December 2018
 
 
 3.4.  Use Case I4 - Crypto Security Audit
@@ -501,9 +501,9 @@ Internet-Draft                     I-D                         July 2018
 
 
 
-Andreasen, et al.        Expires January 3, 2019                [Page 9]
+Andreasen, et al.         Expires July 2, 2019                  [Page 9]
 
-Internet-Draft                     I-D                         July 2018
+Internet-Draft                     I-D                     December 2018
 
 
    The security device requires access to plain text HTTP header for
@@ -557,9 +557,9 @@ Internet-Draft                     I-D                         July 2018
 
 
 
-Andreasen, et al.        Expires January 3, 2019               [Page 10]
+Andreasen, et al.         Expires July 2, 2019                 [Page 10]
 
-Internet-Draft                     I-D                         July 2018
+Internet-Draft                     I-D                     December 2018
 
 
    In theory, these endpoints should of course be patched, but in
@@ -613,9 +613,9 @@ Internet-Draft                     I-D                         July 2018
 
 
 
-Andreasen, et al.        Expires January 3, 2019               [Page 11]
+Andreasen, et al.         Expires July 2, 2019                 [Page 11]
 
-Internet-Draft                     I-D                         July 2018
+Internet-Draft                     I-D                     December 2018
 
 
    may not even be directly under configuration control of the
@@ -632,8 +632,8 @@ Internet-Draft                     I-D                         July 2018
 
 7.  Acknowledgements
 
-   Eric Rescorla provided several comments on technical accuracy and
-   middlebox security implications.
+   The authors thank Eric Rescorla who provided several comments on
+   technical accuracy and middlebox security implications.
 
 8.  Change Log
 
@@ -641,14 +641,13 @@ Internet-Draft                     I-D                         July 2018
 
    Updates based on comments from Eric Rescorla.
 
+8.2.  Version -03
+
+   Updates based on EKR's comments
+
 9.  References
 
 9.1.  Normative References
-
-   [I-D.ietf-tls-tls13]
-              Rescorla, E., "The Transport Layer Security (TLS) Protocol
-              Version 1.3", draft-ietf-tls-tls13-28 (work in progress),
-              March 2018.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -660,19 +659,26 @@ Internet-Draft                     I-D                         July 2018
               DOI 10.17487/RFC5246, August 2008,
               <https://www.rfc-editor.org/info/rfc5246>.
 
+   [RFC8446]  Rescorla, E., "The Transport Layer Security (TLS) Protocol
+              Version 1.3", RFC 8446, DOI 10.17487/RFC8446, August 2018,
+              <https://www.rfc-editor.org/info/rfc8446>.
+
+
+
+
+
+
+
+Andreasen, et al.         Expires July 2, 2019                 [Page 12]
+
+Internet-Draft                     I-D                     December 2018
+
+
 9.2.  Informative References
 
    [HTTPSintercept]
               "The Security Impact of HTTPS Interception", n.d.,
               <https://jhalderm.com/pub/papers/interception-ndss17.pdf>.
-
-
-
-
-Andreasen, et al.        Expires January 3, 2019               [Page 12]
-
-Internet-Draft                     I-D                         July 2018
-
 
    [I-D.green-tls-static-dh-in-tls13]
               Green, M., Droms, R., Housley, R., Turner, P., and S.
@@ -682,8 +688,8 @@ Internet-Draft                     I-D                         July 2018
 
    [I-D.ietf-tls-sni-encryption]
               Huitema, C. and E. Rescorla, "Issues and Requirements for
-              SNI Encryption in TLS", draft-ietf-tls-sni-encryption-03
-              (work in progress), May 2018.
+              SNI Encryption in TLS", draft-ietf-tls-sni-encryption-04
+              (work in progress), November 2018.
 
    [NERCCIP]  "North American Electric Reliability Corporation, (CIP)
               Critical Infrastructure Protection", n.d.,
@@ -698,12 +704,6 @@ Internet-Draft                     I-D                         July 2018
               "Transport Layer Security (TLS) Session Resumption without
               Server-Side State", RFC 5077, DOI 10.17487/RFC5077,
               January 2008, <https://www.rfc-editor.org/info/rfc5077>.
-
-   [RFC7627]  Bhargavan, K., Ed., Delignat-Lavaud, A., Pironti, A.,
-              Langley, A., and M. Ray, "Transport Layer Security (TLS)
-              Session Hash and Extended Master Secret Extension",
-              RFC 7627, DOI 10.17487/RFC7627, September 2015,
-              <https://www.rfc-editor.org/info/rfc7627>.
 
 Authors' Addresses
 
@@ -725,9 +725,9 @@ Authors' Addresses
 
 
 
-Andreasen, et al.        Expires January 3, 2019               [Page 13]
+Andreasen, et al.         Expires July 2, 2019                 [Page 13]
 
-Internet-Draft                     I-D                         July 2018
+Internet-Draft                     I-D                     December 2018
 
 
    Nancy Cam-Winget
@@ -781,4 +781,4 @@ Internet-Draft                     I-D                         July 2018
 
 
 
-Andreasen, et al.        Expires January 3, 2019               [Page 14]
+Andreasen, et al.         Expires July 2, 2019                 [Page 14]
